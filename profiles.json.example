@@ -1,0 +1,38 @@
+{
+  "profiles": {
+    "devnet": {
+      "wallet": "path/to/your/keypair.json",
+      "coordinatorWallet": "",
+      "url": "https://devnet.helius-rpc.com/?api-key=YOUR_API_KEY"
+    },
+    "d-jeremy": {
+      "wallet": "path/to/your/keypair.json", 
+      "coordinatorWallet": "DQwEfMGS3JDaMBocBww8EqucRscqBjFLnU4q361T2TGF",
+      "url": "https://devnet.helius-rpc.com/?api-key=YOUR_API_KEY"
+    },
+    "m-admin": {
+      "wallet": "path/to/your/keypair.json",
+      "coordinatorWallet": "GyNbz9cfYaSPJTVnWyUVwb3SJonFDhEZAqh2qPATwQPg",
+      "url": "https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY",
+      "multisigAddress": "7K1DxKE638H43tzRg9rUCAhkhvDWZ8XLaDCgLAMCAcax"
+    },
+    "m-birdgame": {
+      "url": "https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY",
+      "wallet": "path/to/your/keypair.json",
+      "coordinatorWallet": "",
+      "multisigAddress": "jTXtbFxGJZ7JRvDG1abfF9f6F8RncP4zS5dfEaTKQZE"
+    },
+    "m-synth": {
+      "multisigAddress": "DVs4NsR7wQGFuHC9NABpGp3dsPBxAF2VfJZv2mfbkPy1",
+      "url": "https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY",
+      "wallet": "path/to/your/keypair.json",
+      "coordinatorWallet": "HY8EAiY9wmRnR4Qv9eyKVtXGXC1x2ymaTo7yUbMgjEaj"
+    },
+    "m-jeremy": {
+      "wallet": "path/to/your/keypair.json",
+      "url": "https://mainnet.helius-rpc.com/?api-key=YOUR_API_KEY",
+      "multisigAddress": "3HCRMmdVXK2iouzi22KoHHmfpEJun2Hzf8XoTWonPeUD",
+      "coordinatorWallet": "9LFUBTPZf4GuBJmzmJmRWUkhpn1biAFhm1UbMLcduuZ3"
+    }
+  }
+}
