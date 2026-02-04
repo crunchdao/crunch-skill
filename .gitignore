@@ -1,0 +1,15 @@
+# Environment-specific configuration files
+profiles.json
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# Local development files
+.env
+*.local
+
+# OS files
+.DS_Store
+Thumbs.db
