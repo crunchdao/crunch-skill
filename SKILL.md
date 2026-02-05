@@ -19,27 +19,63 @@ Verify installation:
 crunch-cli --version
 ```
 
-Ask the user if they want to store different profiles. Profiles can be added in conversations and include following information: 
+## Profiles
 
-name: Name of the environment for quick reference
-environment or rpc: 
-   Can be devnet | mainnet  or an RPC URL
-   use this to fill -u, --url <URL_OR_MONIKER>  URL for Solana's JSON RPC or moniker (or their first
-                              letter): [mainnet-beta, testnet, devnet, localhost]
-multisig: 
-  Is the address of the Multisig (not the Vault of the multisig)
-  -m, --multisig <address>    Squads multisig address for coordinator operations
+Profiles are stored in `profiles.json` (next to this file). Each profile maps a short name to a set of CLI flags so users can say things like _"list crunches for m-jeremy"_ instead of typing full addresses every time.
 
-wallet: 
-  Only supported in multisig mode and if the wallet is a proposer only. Sets the Wallet and the solana wallet should be created locally.
-  -w, --wallet <wallet>       Path to wallet keypair
+### Profile file format
 
-coordinator: 
-  The coordinator address to use. If this is set default to looking for this coordinators crunch for example. 
+```json
+{
+  "profiles": {
+    "m-jeremy": {
+      "url": "https://mainnet.helius-rpc.com/?api-key=...",
+      "wallet": "/path/to/keypair.json",
+      "multisigAddress": "9WzDXwBbmkg8...",
+      "coordinatorWallet": "5abc..."
+    },
+    "devnet": {
+      "url": "devnet",
+      "wallet": "/path/to/dev-keypair.json",
+      "coordinatorWallet": ""
+    }
+  }
+}
+```
 
-Store these profiles locally for lookup. When a user says; Get all the crunches of profile <profile-name> it would look for the profile and insert the values in the CLI. 
+### Profile fields → CLI flags
 
-It is also possible to set the profile, eg: user coordinator profile m-jeremy
+| Profile field | CLI flag | Notes |
+|---|---|---|
+| `url` | `-u <value>` | RPC URL or moniker: `mainnet-beta`, `devnet`, `testnet`, `localhost` |
+| `wallet` | `-w <value>` | Path to Solana keypair. Only used in multisig mode when the wallet is a proposer. |
+| `multisigAddress` | `-m <value>` | Squads multisig address (not the vault). |
+| `coordinatorWallet` | appended to `coordinator get` | The coordinator owner address. When set, default to this coordinator's context (e.g. listing its crunches). |
+
+### How to resolve a profile
+
+When a user references a profile name:
+
+1. Read `profiles.json` from the skill directory.
+2. Look up the profile by name (case-insensitive match).
+3. Map each non-empty field to its CLI flag (see table above).
+4. Prepend the flags to whatever command is being built.
+
+**Example:** User says _"list crunches for m-jeremy"_
+
+1. Load profile `mainnet-proposer` → `{ url: "https://mainnet...", wallet: "/path/...", multisigAddress: "9WzDX..." }`
+2. Build: `crunch-cli -u "https://mainnet..." -w "/path/..." -m "9WzDX..." crunches list`
+
+**Example:** User says _"show coordinator for devnet"_
+
+1. Load profile `devnet` → `{ url: "devnet" }`
+2. Build: `crunch-cli -u devnet coordinator get`
+
+### Managing profiles
+
+- Users can ask to **add**, **update**, or **remove** profiles. When they do, read the current `profiles.json`, apply the change, and write it back.
+- If `profiles.json` doesn't exist yet, create it with the structure above.
+- When a user says _"set profile to m-jeremy"_ or _"use profile m-jeremy"_, remember it for the rest of the conversation and apply those flags to all subsequent commands automatically.
 
 ## Command Mapping Rules
 
@@ -97,7 +133,7 @@ For speed and consistency, map these phrases **directly** to CLI commands withou
    crunch-cli [options] <command> [arguments]
    ```
 
-4. **Format** output for the specified medium (see Output Formatting below)
+4. **Format** The output of the CLI should be kept as close as possible, except if the user told you to post process the data. But map the output for the specified medium (see Output Formatting below as reference to use)
 
 ## Available Commands Reference
 
