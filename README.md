@@ -1,47 +1,48 @@
-# Crunch Protocol Skill
+# CrunchDAO Skill
 
-An AI skill that provides a natural language interface to the [Crunch Protocol](https://www.crunchdao.com/) CLI (`crunch-cli`). It translates plain-English requests into the correct CLI commands for managing coordinators, competitions (crunches), rewards, checkpoints, and certificates on Solana.
+An AI skill for [CrunchDAO](https://www.crunchdao.com/) that does two things:
 
-Supports output formatting for Slack, Telegram, Discord, or plain text.
+1. **Coordinator CLI** — Translates plain-English requests into `crunch-cli` commands for managing coordinators, competitions, rewards, and checkpoints on Solana.
+2. **Competition Quickstarters** — Helps participants discover, understand, improve, backtest, and submit solutions for CrunchDAO competitions.
 
 ## What's in this repo
 
 | File | Purpose |
 |---|---|
-| `SKILL.md` | The skill definition — command mappings, profile resolution, output formatting rules |
+| `SKILL.md` | The skill definition — CLI command mappings, profile resolution, quickstarter workflow |
+| `competitions.json` | Registry mapping competition names → repos, packages, evaluators |
 | `references/cli-reference.md` | Full `crunch-cli` command reference |
+| `profiles.json.example` | Example profile configuration |
+| `profiles.json` | Your local profiles (git-ignored) |
 
 ## Prerequisites
 
 ```bash
+# Coordinator CLI (Solana operations)
 npm install -g @crunchdao/crunch-cli
 crunch-cli --version
+
+# Competition SDKs (install per competition as needed)
+pip install crunch-synth     # Synth competition
+pip install crunch-cli       # DataCrunch competitions (Python SDK)
 ```
 
 ## Profile Setup
 
-Profiles let you switch between networks / wallets / multisigs by name (e.g. _"list crunches for mainnet-crunch-coordinator"_).
+Profiles let you switch between networks / wallets / multisigs by name (e.g. _"list crunches for m-jeremy"_).
 
-1. **Copy the example file:**
-   ```bash
-   cp profiles.json.example profiles.json
-   ```
+1. Copy the example: `cp profiles.json.example profiles.json`
+2. Fill in your RPC URL, wallet path, multisig address, coordinator wallet.
 
-2. **Fill in your values:**
-   - `url` — RPC endpoint or moniker (`mainnet-beta`, `devnet`, …)
-   - `wallet` — path to your Solana keypair
-   - `multisigAddress` — Squads multisig address (if applicable)
-   - `coordinatorWallet` — coordinator owner address
-
-See the **Profiles** section in [`SKILL.md`](SKILL.md) for the full format and resolution rules.
+See the **Profiles** section in [`SKILL.md`](SKILL.md) for details.
 
 ## Examples
 
-Just ask in plain English. The skill resolves profiles, builds the CLI command, runs it, and formats the output.
+### Coordinator CLI
 
 ---
 
-### **You:** _"get me information about the Synth crunch on mainnet"_
+**You:** _"get me information about the Synth crunch on mainnet"_
 
 ```
 📋 Crunch: Synth
@@ -58,23 +59,7 @@ Just ask in plain English. The skill resolves profiles, builds the CLI command, 
 
 ---
 
-### **You:** _"list all crunches for mainnet-autonity"_
-
-```
-🏆 Crunches for coordinator RRs8...ttZQ
-════════════════════════════════════════════════════════════
-  1. Synth          🟢 Started    5000 USDC    132 models
-  2. Chaos          🟢 Started    8000 USDC    453 models
-  3. Q4 Challenge   ⚫ Ended      10000 USDC   1452 models
-```
-
----
-
-### **You:** _"create a checkpoint multisig proposal for the Synth crunch"_
-
-```
-crunch-cli -m "9WzDX..." crunch checkpoint-create "Synth" prizes.json
-```
+**You:** _"create a checkpoint multisig proposal for the Synth crunch"_
 
 ```
 ✅ Multisig proposal created
@@ -86,11 +71,7 @@ crunch-cli -m "9WzDX..." crunch checkpoint-create "Synth" prizes.json
 
 ---
 
-### **You:** _"what's the current checkpoint for Chaos, format for slack"_
-
-```
-crunch-cli crunch checkpoint-get-current "Chaos"
-```
+**You:** _"what's the current checkpoint for Chaos, format for slack"_
 
 ```
 *📍 Checkpoint: Chaos*
@@ -103,7 +84,76 @@ crunch-cli crunch checkpoint-get-current "Chaos"
 
 ---
 
-When a profile is active, its flags (`-u`, `-w`, `-m`) are injected automatically — you just ask in plain English.
+### Competition Quickstarters
+
+---
+
+**You:** _"show me quickstarters for Falcon"_
+
+```
+📚 Quickstarters for Falcon
+════════════════════════════════════════
+  1. NGBoost              Python  Submission   📓 notebook
+     by Alexis GASSMANN
+  2. EWMA Variance        Python  Submission   📓 notebook
+     by Alexis GASSMANN
+  3. Quantile Lin. Reg.   Python  Submission   📓 notebook
+     by Alexis GASSMANN
+```
+
+---
+
+**You:** _"set up synth and explain the example tracker"_
+
+```
+📖 Quickstarter Walkthrough: Example Tracker (Synth)
+════════════════════════════════════════════════════════════
+
+🎯 Goal
+  Predict probability distributions of future crypto price changes
+  across multiple assets (BTC, ETH, SOL, ...) and time horizons.
+
+🔌 Interface
+  Extend TrackerBase and implement: predict(asset, horizon, step) → distributions
+
+🧠 Approach
+  Gaussian model — computes mean/std of 5-min returns, scales by √(step/300).
+
+⚠️ Limitations
+  - Assumes normal distribution (ignores fat tails)
+  - No volatility regime detection
+  - No cross-asset correlation
+```
+
+---
+
+**You:** _"propose improvements and test them"_
+
+```
+📊 Evaluation Results: MixtureTracker vs Baseline
+════════════════════════════════════════════════════════════
+
+                     Baseline      Yours        Δ
+  BTC (24h CRPS)     0.4231       0.3812      -9.9% ✅
+  ETH (24h CRPS)     0.3987       0.3654      -8.3% ✅
+  SOL (24h CRPS)     0.5102       0.4890      -4.2% ✅
+  ────────────────────────────────────────────────
+  Overall             0.3856       0.3586      -7.0% ✅
+```
+
+---
+
+**You:** _"submit my tracker to synth"_
+
+```
+✅ Ready to submit to Synth
+  File:        my_tracker.py
+  Interface:   TrackerBase.predict() ✓
+  Imports:     all resolved ✓
+  Platform:    https://hub.crunchdao.com/competitions/synth
+```
+
+---
 
 ## Security
 

@@ -1,0 +1,89 @@
+{
+  "registry": "crunchdao/competitions",
+  "competitions": {
+    "synth": {
+      "repo": "crunchdao/crunch-synth",
+      "package": "crunch-synth",
+      "hub": "https://hub.crunchdao.com/competitions/synth",
+      "evaluator": {
+        "type": "python",
+        "class": "crunch_synth.tracker_evaluator.TrackerEvaluator",
+        "usage": "tracker_evaluator = TrackerEvaluator(YourTracker())\ntracker_evaluator.tick({\"SOL\": [(ts, price)]})\npredictions = tracker_evaluator.predict(\"SOL\", horizon=86400, steps=[300, 3600, 21600, 86400])\nprint(f\"CRPS: {tracker_evaluator.overall_score('SOL'):.4f}\")"
+      },
+      "submit": {
+        "method": "platform",
+        "docs": "https://docs.crunchdao.com/competitions/competitions/synth"
+      }
+    },
+    "datacrunch": {
+      "repo": null,
+      "package": "crunch-cli",
+      "hub": "https://hub.crunchdao.com/competitions/datacrunch",
+      "evaluator": {
+        "type": "cli",
+        "command": "crunch test",
+        "usage": "cd <workspace> && crunch test"
+      },
+      "submit": {
+        "method": "cli",
+        "command": "crunch push",
+        "usage": "cd <workspace> && crunch push \"Submission message\""
+      }
+    },
+    "falcon": {
+      "repo": "microprediction/birdgame",
+      "package": "birdgame",
+      "hub": "https://hub.crunchdao.com/competitions/falcon",
+      "evaluator": null,
+      "submit": {
+        "method": "platform",
+        "docs": "https://hub.crunchdao.com/competitions/falcon"
+      }
+    },
+    "datacrunch-rally": {
+      "repo": null,
+      "package": "crunch-cli",
+      "hub": "https://hub.crunchdao.com/competitions/datacrunch-rally",
+      "evaluator": {
+        "type": "cli",
+        "command": "crunch test",
+        "usage": "cd <workspace> && crunch test"
+      },
+      "submit": {
+        "method": "cli",
+        "command": "crunch push",
+        "usage": "cd <workspace> && crunch push \"Submission message\""
+      }
+    },
+    "broad-1": {
+      "repo": null,
+      "package": "crunch-cli",
+      "hub": "https://hub.crunchdao.com/competitions/broad-1",
+      "evaluator": {
+        "type": "cli",
+        "command": "crunch test",
+        "usage": "cd <workspace> && crunch test"
+      },
+      "submit": {
+        "method": "cli",
+        "command": "crunch push",
+        "usage": "cd <workspace> && crunch push \"Submission message\""
+      }
+    },
+    "adialab": {
+      "repo": null,
+      "package": "crunch-cli",
+      "hub": "https://hub.crunchdao.com/competitions/adialab",
+      "evaluator": {
+        "type": "cli",
+        "command": "crunch test",
+        "usage": "cd <workspace> && crunch test"
+      },
+      "submit": {
+        "method": "cli",
+        "command": "crunch push",
+        "usage": "cd <workspace> && crunch push \"Submission message\""
+      }
+    }
+  }
+}
