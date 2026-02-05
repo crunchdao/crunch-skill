@@ -34,9 +34,12 @@ Two independent skills, each with their own `SKILL.md`:
 npm install -g @crunchdao/crunch-cli
 crunch-cli --version
 
-# Competition SDKs (install per competition as needed)
-pip install crunch-synth     # Synth competition
-pip install crunch-cli       # DataCrunch competitions (Python SDK)
+# Competition SDK + Jupyter (Python — use a venv)
+python3 -m venv ~/.crunch/venv
+source ~/.crunch/venv/bin/activate
+pip install crunch-cli --upgrade          # CrunchDAO CLI (provides `crunch` command)
+pip install jupyter notebook ipykernel    # Notebook environment
+pip install crunch-synth --upgrade        # Synth competition (install per competition)
 ```
 
 ## Profile Setup

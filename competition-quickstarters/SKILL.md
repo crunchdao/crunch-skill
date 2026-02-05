@@ -1,56 +1,102 @@
 ---
 name: competition-quickstarters
-description: Helps participants discover, understand, improve, backtest, and submit solutions for CrunchDAO competitions. Downloads quickstarters, explains the code and scoring, proposes improvements, runs local evaluators, and handles submission.
+description: Helps participants discover, understand, improve, backtest, and submit solutions for CrunchDAO competitions. Uses the crunch CLI (pip install crunch-cli) for workspace setup, data download, local testing, notebook conversion, and submission. Guides users through quickstarter code, proposes improvements, and runs evaluations.
 ---
 
 # Competition Quickstarter Skill
 
-This skill guides users through the full CrunchDAO competition lifecycle: discovering quickstarters, understanding them, building better solutions, evaluating locally, and submitting.
+This skill guides users through the full CrunchDAO competition lifecycle: setting up a workspace, discovering and understanding quickstarters, building better solutions, testing locally, and submitting.
+
+## Setup
+
+### Python environment
+
+Create a virtual environment for competition work. **Always ask the user for confirmation before running install commands.**
+
+```bash
+python3 -m venv ~/.crunch/venv
+source ~/.crunch/venv/bin/activate
+```
+
+### CrunchDAO CLI (Python SDK)
+
+The `crunch` command is the primary tool for all competition operations. Install it inside the virtual environment:
+
+```bash
+pip install crunch-cli --upgrade
+```
+
+This provides the `crunch` command with: `setup`, `test`, `push`, `download`, `convert`, `quickstarter`, and more.
+
+### Jupyter notebook environment
+
+Many quickstarters are Jupyter notebooks. Install the notebook environment:
+
+```bash
+pip install jupyter notebook ipykernel
+```
+
+To register the venv as a Jupyter kernel (so notebooks use the right environment):
+
+```bash
+python -m ipykernel install --user --name crunch --display-name "CrunchDAO"
+```
+
+### Competition-specific packages
+
+Some competitions have their own SDK. Install as needed:
+
+```bash
+pip install crunch-synth --upgrade   # Synth competition
+```
+
+### Verify setup
+
+```bash
+crunch --version
+jupyter --version
+python -c "import crunch; print('crunch SDK OK')"
+```
 
 ## Overview
 
-Each CrunchDAO competition has **quickstarters** — ready-to-run notebooks and code showing how to participate. The competitions registry is at [`crunchdao/competitions`](https://github.com/crunchdao/competitions) on GitHub. Some competitions also have dedicated repos with full SDKs and evaluators.
+Each CrunchDAO competition has **quickstarters** — ready-to-run notebooks and code showing how to participate. The `crunch` CLI handles workspace setup, data download, quickstarter selection, local testing, and submission.
 
 The mapping from competition names to repos, packages, and tools lives in [`competitions.json`](competitions.json) next to this file.
 
-## Workspace
-
-All quickstarter work happens in a local workspace directory. Default: `~/.crunch/workspace/<competition>/`.
-
-When starting work on a competition:
-1. Create the workspace directory if it doesn't exist.
-2. Clone/download the quickstarter code there.
-3. All subsequent work (editing, backtesting, submitting) happens from that directory.
-
-If the user specifies a different directory (e.g. _"set up synth in ~/projects/synth"_), use that instead and remember it for the session.
-
-## Step 1: Discover Quickstarters
+## Step 1: Discover Competitions & Quickstarters
 
 ### Phrase mapping
 
 | User says | Action |
 |---|---|
-| `show quickstarters for <competition>` | List available quickstarters |
 | `what competitions are available` | List all competitions from competitions.json |
+| `show quickstarters for <competition>` | List available quickstarters |
 | `quickstarters for synth` | List quickstarters for Synth |
+
+### How to list competitions
+
+Read `competitions.json` and present the available competitions with their hub URLs.
 
 ### How to list quickstarters
 
-1. Read `competitions.json` to find the registry repo (default: `crunchdao/competitions`).
-2. Fetch the quickstarters directory for the competition via GitHub API:
-   ```bash
-   curl -s "https://api.github.com/repos/crunchdao/competitions/contents/competitions/<name>/quickstarters"
-   ```
-3. For each subdirectory, fetch its `quickstarter.json`:
-   ```bash
-   curl -s "https://api.github.com/repos/crunchdao/competitions/contents/competitions/<name>/quickstarters/<qs>/quickstarter.json"
-   ```
-4. Parse and present to the user:
-   - Title
-   - Authors
-   - Language (Python / R)
-   - Usage (Submission / Exploration)
-   - Whether it's a notebook
+Fetch from the competitions registry via GitHub API:
+
+```bash
+# List quickstarter directories
+curl -s "https://api.github.com/repos/crunchdao/competitions/contents/competitions/<name>/quickstarters"
+
+# Get details for each
+curl -s "https://api.github.com/repos/crunchdao/competitions/contents/competitions/<name>/quickstarters/<qs>/quickstarter.json"
+```
+
+The `quickstarter.json` contains:
+- `title` — display name
+- `authors` — list of `{name, link}`
+- `language` — `PYTHON` or `R`
+- `usage` — `SUBMISSION` (can be submitted) or `EXPLORATION` (for learning)
+- `notebook` — `true` if `.ipynb`
+- `entrypoint` — file path or URL to the code
 
 ### Example output
 
@@ -63,51 +109,105 @@ If the user specifies a different directory (e.g. _"set up synth in ~/projects/s
      by Alexis GASSMANN
   3. Quantile Lin. Reg.   Python  Submission   📓 notebook
      by Alexis GASSMANN
-  4. Wealth Distribution  Python  Submission   📓 notebook
-     by Alexis GASSMANN
 ```
 
-## Step 2: Download & Set Up
+## Step 2: Set Up Workspace
 
 ### Phrase mapping
 
 | User says | Action |
 |---|---|
-| `download the <title> quickstarter for <competition>` | Download specific quickstarter |
-| `set up synth` | Clone the Synth competition repo + quickstarter |
-| `get the example tracker` | Download the quickstarter (infer competition from context) |
+| `set up <competition>` | Full workspace setup with crunch CLI |
+| `set up datacrunch` | Set up DataCrunch workspace |
+| `set up synth notebook` | Set up Synth in notebook mode |
+| `download the data for <competition>` | Download competition data |
+| `get the <name> quickstarter` | Deploy a specific quickstarter |
 
-### How to download
+### How to set up — using `crunch setup`
 
-1. Look up the competition in `competitions.json`.
-2. Create the workspace directory:
-   ```bash
-   mkdir -p ~/.crunch/workspace/<competition>
-   cd ~/.crunch/workspace/<competition>
-   ```
-3. If the competition has a dedicated `repo` in `competitions.json`, clone it:
-   ```bash
-   git clone https://github.com/<repo>.git .
-   ```
-4. Fetch the `quickstarter.json` for the requested quickstarter to find its `entrypoint`.
-5. Download the entrypoint:
-   - **If the entrypoint is a URL** (starts with `http`): download or clone the target repo.
-   - **If the entrypoint is a relative path**: it's inside the cloned repo already.
-6. If the entrypoint is a `.ipynb` notebook, convert it to `.py` for easier reading:
-   ```bash
-   jupyter nbconvert --to script <notebook>.ipynb
-   ```
-   Keep both files — the notebook for running, the `.py` for analysis.
-7. Install the competition's Python package:
-   ```bash
-   pip install <package>
-   ```
-   **Always ask the user for confirmation before installing packages.**
-8. If the competition repo has a `SKILL.md`, read it — it contains competition-specific instructions. If it only has a `README.md`, read that instead. This context is critical for all subsequent steps.
+The user needs a **clone token** from the competition's hub page. Ask for it if not provided.
+
+**Standard setup** (creates a workspace directory with quickstarter selection):
+
+```bash
+crunch setup --token <CLONE_TOKEN> <competition-name> <project-name>
+```
+
+This will:
+1. Create a directory `<competition-name>-<project-name>/`
+2. Prompt the user to select a quickstarter (interactive)
+3. Download the competition data
+4. Set up the workspace with `main.py` as the entrypoint
+
+**Pre-select a quickstarter:**
+
+```bash
+crunch setup --token <CLONE_TOKEN> --quickstarter-name "NGBoost" <competition-name> <project-name>
+```
+
+**Notebook setup** (for Jupyter workflows):
+
+```bash
+crunch setup --token <CLONE_TOKEN> --notebook <competition-name> <project-name>
+```
+
+In notebook mode:
+- Workspace is set up in the current directory (`.`)
+- No quickstarter selection (notebooks use `crunch.load_notebook()`)
+- Force mode is implicit
+
+**Skip data download** (faster setup):
+
+```bash
+crunch setup --token <CLONE_TOKEN> --no-data <competition-name> <project-name>
+```
+
+### Download data separately
+
+```bash
+cd <workspace-directory>
+crunch download
+crunch download --force              # re-download
+crunch download --size-variant small  # smaller dataset
+```
+
+### Deploy a quickstarter into an existing workspace
+
+```bash
+cd <workspace-directory>
+crunch quickstarter                           # interactive selection
+crunch quickstarter --name "NGBoost"          # specific quickstarter
+crunch quickstarter --show-notebook           # include notebook quickstarters
+crunch quickstarter --overwrite               # overwrite existing files
+```
+
+### Convert notebook to Python script
+
+If working with a notebook quickstarter and need a `.py` file:
+
+```bash
+crunch convert notebook.ipynb main.py
+crunch convert notebook.ipynb main.py --override       # overwrite existing
+crunch convert notebook.ipynb main.py --requirements    # also export requirements.txt
+crunch convert notebook.ipynb main.py --embedded-files  # also export embedded files
+```
+
+### For competitions with dedicated repos (e.g. Synth)
+
+Some competitions have their own SDK repo. Look up in `competitions.json`:
+
+```bash
+# Clone the competition repo
+git clone https://github.com/crunchdao/crunch-synth.git
+cd crunch-synth
+
+# Install the SDK
+pip install crunch-synth --upgrade
+```
 
 ### Also fetch reference material
 
-After downloading, check the competition repo for these files and read them if present:
+After setup, check the competition repo for these files and read them if present:
 - `SKILL.md` or `README.md` — competition rules, interface, scoring
 - `LITERATURE.md` — relevant academic papers and approaches
 - `PACKAGES.md` — useful Python packages for the competition
@@ -121,21 +221,38 @@ After downloading, check the competition repo for these files and read them if p
 |---|---|
 | `explain this quickstarter` | Walkthrough of the downloaded code |
 | `what does the example tracker do` | Explain the quickstarter approach |
-| `how does scoring work for synth` | Explain the competition's scoring |
+| `how does scoring work for <competition>` | Explain the competition's scoring |
 | `what's the interface I need to implement` | Explain the required code structure |
 
 ### How to explain
 
-Read the quickstarter code and the competition's SKILL.md/README.md, then produce a structured walkthrough:
+Read the quickstarter code (the `main.py` or notebook in the workspace) and the competition's SKILL.md/README.md, then produce a structured walkthrough:
 
 1. **Goal** — What the competition asks you to predict / build.
 2. **Interface** — What class/function you must implement, its inputs and outputs.
-3. **Data flow** — How data comes in and predictions go out (e.g. `tick()` → `PriceStore` → `predict()`).
-4. **Approach** — What strategy this specific quickstarter uses (e.g. Gaussian returns model).
-5. **Scoring** — How predictions are evaluated (e.g. CRPS, ranked relative to other participants).
+3. **Data flow** — How data comes in and predictions go out.
+4. **Approach** — What strategy this specific quickstarter uses.
+5. **Scoring** — How predictions are evaluated.
 6. **Constraints** — Time limits, model count limits, required output format.
 7. **Limitations** — Where this quickstarter is naive or overly simple.
 8. **Ideas** — Quick pointers to what could be improved (expanded in Step 4).
+
+### Notebook usage pattern
+
+For competitions using the `crunch` SDK in notebooks:
+
+```python
+import crunch
+crunch = crunch.load_notebook()
+
+# Load competition data
+X_train, y_train, X_test = crunch.load_data()
+
+# ... build and train model ...
+
+# Test locally
+crunch.test()
+```
 
 ### Example output
 
@@ -157,25 +274,22 @@ Read the quickstarter code and the competition's SKILL.md/README.md, then produc
   Multi-resolution handled automatically by predict_all()
 
 🧠 Approach
-  This quickstarter uses a simple Gaussian model:
-  - Computes mean and std of 5-minute historical returns
-  - Scales by √(step/300) for different time horizons
-  - Returns a single-component Gaussian mixture
+  Simple Gaussian model — computes mean/std of 5-min returns,
+  scales by √(step/300) for different time horizons.
 
 📏 Scoring
   CRPS (Continuous Ranked Probability Score) — lower is better.
   7-day rolling average, ranked against all participants.
-  Best score = 1.0, worst 5% = 0.0.
 
 ⏱️ Constraints
-  - All forecasts for a round must complete within 40 seconds
-  - Max 2 models per participant
+  All forecasts for a round must complete within 40 seconds.
+  Max 2 models per participant.
 
 ⚠️ Limitations
-  - Assumes returns are normally distributed (fat tails ignored)
-  - No regime detection (treats volatile and calm periods the same)
+  - Assumes normal distribution (fat tails ignored)
+  - No regime detection
   - No cross-asset correlation
-  - Single-component density (can't capture bimodal scenarios)
+  - Single-component density
 ```
 
 ## Step 4: Propose New Solutions
@@ -192,7 +306,7 @@ Read the quickstarter code and the competition's SKILL.md/README.md, then produc
 
 ### How to propose
 
-1. **Analyze the current approach** — Read the active quickstarter code and identify its assumptions and weaknesses.
+1. **Analyze the current approach** — Read the `main.py` or notebook in the workspace and identify its assumptions and weaknesses.
 2. **Cross-reference competition context** — Read the SKILL.md/README.md for scoring details, the LITERATURE.md for research directions, and PACKAGES.md for available tools.
 3. **Generate concrete suggestions** with code. Always propose changes as runnable code, not just ideas. Categories of improvement:
 
@@ -219,56 +333,85 @@ Read the quickstarter code and the competition's SKILL.md/README.md, then produc
    - Complexity / effort estimate
    - The actual code
 
-5. When the user picks an approach, generate the full solution file in the workspace directory.
+5. When the user picks an approach, generate the full solution file in the workspace directory as `main.py` (the default entrypoint the `crunch` CLI expects).
 
 ### Important rules for proposing solutions
 
-- Always respect the competition's interface (e.g. must extend `TrackerBase` for Synth).
+- Always respect the competition's interface.
 - Always respect constraints (time limits, output format).
 - Keep the quickstarter's structure as a starting point — modify, don't rewrite from scratch (unless asked).
+- The entrypoint must be `main.py` (default for `crunch push` and `crunch test`).
+- Model files go in the `resources/` directory (default model directory for `crunch`).
 - If using a new package, note it and ask before installing.
 
-## Step 5: Backtest / Evaluate Locally
+## Step 5: Test Locally
 
 ### Phrase mapping
 
 | User says | Action |
 |---|---|
+| `test my solution` | Run `crunch test` |
 | `test my tracker` | Run the local evaluator |
 | `backtest on SOL` | Evaluate on a specific asset |
 | `compare with the baseline` | Run both and compare scores |
 | `how does my model score` | Run evaluation and report results |
-| `run crunch test` | Run the CLI-based test |
+| `run crunch test` | Run `crunch test` directly |
 
-### How to evaluate
+### How to test — using `crunch test`
 
-1. Look up the competition in `competitions.json` to find the evaluator.
+The primary way to test locally for most competitions:
 
-2. **Python evaluator** (e.g. Synth):
-   - The evaluator class and usage pattern are in `competitions.json`.
-   - Write a small evaluation script in the workspace:
-     ```python
-     from crunch_synth.tracker_evaluator import TrackerEvaluator
-     from my_tracker import MyTracker
+```bash
+cd <workspace-directory>
+crunch test
+```
 
-     evaluator = TrackerEvaluator(MyTracker())
-     # Feed data, run predictions, report scores
-     ```
-   - Run it: `python evaluate.py`
-   - Report CRPS scores per asset and horizon.
+**`crunch test` options:**
 
-3. **CLI evaluator** (e.g. DataCrunch):
-   ```bash
-   cd ~/.crunch/workspace/datacrunch
-   crunch test
-   ```
+```bash
+crunch test --main-file main.py            # specify entrypoint (default: main.py)
+crunch test --model-directory resources     # model dir (default: resources)
+crunch test --round-number @current        # which round's data to use
+crunch test --gpu                          # enable GPU flag
+crunch test --no-checks                    # skip prediction validation
+crunch test --no-determinism-check         # skip determinism check
+crunch test --train-frequency 1            # train interval
+crunch test --no-force-first-train         # don't force train on first loop
+```
 
-4. **No evaluator available** — Tell the user there's no local evaluator for this competition and suggest submitting to the platform to see results.
+### For Synth (Python evaluator)
 
-5. **Comparison mode** — When comparing approaches:
-   - Run the baseline quickstarter first, record scores.
-   - Run the user's modified version, record scores.
-   - Present a side-by-side comparison.
+Synth has its own evaluator in addition to `crunch test`:
+
+```python
+from crunch_synth.tracker_evaluator import TrackerEvaluator
+from my_tracker import MyTracker
+
+evaluator = TrackerEvaluator(MyTracker())
+evaluator.tick({"SOL": [(ts, price)]})
+predictions = evaluator.predict("SOL", horizon=86400, steps=[300, 3600, 21600, 86400])
+print(f"CRPS: {evaluator.overall_score('SOL'):.4f}")
+```
+
+### For notebooks
+
+In a Jupyter notebook using the crunch SDK:
+
+```python
+import crunch
+crunch_tools = crunch.load_notebook()
+
+X_train, y_train, X_test = crunch_tools.load_data()
+# ... your model code ...
+crunch_tools.test()
+```
+
+### Comparison mode
+
+When comparing approaches:
+1. Run `crunch test` with the baseline quickstarter, record output.
+2. Swap in the user's modified `main.py`, run `crunch test` again.
+3. Present a side-by-side comparison.
 
 ### Example output
 
@@ -280,12 +423,8 @@ Read the quickstarter code and the competition's SKILL.md/README.md, then produc
   BTC (24h CRPS)     0.4231       0.3812      -9.9% ✅
   ETH (24h CRPS)     0.3987       0.3654      -8.3% ✅
   SOL (24h CRPS)     0.5102       0.4890      -4.2% ✅
-  BTC (1h CRPS)      0.2103       0.1987      -5.5% ✅
   ────────────────────────────────────────────────
   Overall             0.3856       0.3586      -7.0% ✅
-
-  Your model outperforms the baseline on all assets.
-  Biggest improvement: BTC 24h (-9.9%)
 ```
 
 ## Step 6: Submit
@@ -294,44 +433,99 @@ Read the quickstarter code and the competition's SKILL.md/README.md, then produc
 
 | User says | Action |
 |---|---|
-| `submit my solution` | Submit to the competition |
-| `push to datacrunch` | Submit via CLI |
+| `submit my solution` | Run `crunch push` |
+| `push my code` | Run `crunch push` |
 | `deploy my tracker` | Submit to the platform |
 
-### How to submit
+### How to submit — using `crunch push`
 
-1. Look up the competition in `competitions.json` to find the submission method.
+```bash
+cd <workspace-directory>
+crunch push -m "Description of changes"
+```
 
-2. **CLI submission** (DataCrunch and similar):
-   ```bash
-   cd ~/.crunch/workspace/<competition>
-   crunch push "Submission message"
-   ```
+**`crunch push` options:**
 
-3. **Platform submission** (Synth and similar):
-   - Direct the user to the platform URL from `competitions.json`.
-   - Explain what files need to be uploaded.
-   - Provide the link to track results on the leaderboard.
+```bash
+crunch push -m "Added mixture density model"           # with message
+crunch push --main-file main.py                        # specify entrypoint
+crunch push --model-directory resources                 # model dir
+crunch push --dry                                      # dry run (prepare but don't submit)
+crunch push --no-pip-freeze                            # skip pip freeze
+```
 
-4. **Before submitting, always validate:**
-   - The solution implements the required interface.
-   - All imports resolve (no missing packages).
-   - The solution runs within time constraints (if testable locally).
-   - Ask the user for confirmation: _"Ready to submit to <competition>?"_
+The `crunch push` command:
+1. Packages your `main.py` and `resources/` directory
+2. Converts `.ipynb` to `.py` automatically if `main.py` is missing but a notebook exists
+3. Uploads to the CrunchDAO platform
+4. Creates a new submission entry
+
+### For platform-only competitions (e.g. Synth)
+
+Some competitions submit through the platform directly:
+- Direct the user to the hub URL from `competitions.json`
+- Explain what files need to be uploaded
+- Provide the leaderboard link
+
+### Before submitting, always:
+
+1. Run `crunch test` to verify the solution works locally.
+2. Check that `main.py` exists (or a notebook that can be converted).
+3. Check that the `resources/` directory contains any required model files.
+4. Ask the user for confirmation: _"Ready to submit?"_
+
+## Detecting the environment
+
+The crunch SDK lets you detect whether code is running locally or in the competition runner:
+
+```python
+import crunch
+
+if crunch.is_inside_runner:
+    print("running inside the runner")
+else:
+    print("running locally")
+    # enable debug logging, etc.
+```
+
+This is useful for adding debug output or loading local-only dependencies.
+
+## `crunch` CLI Command Reference
+
+| Command | Description |
+|---|---|
+| `crunch setup --token <TOKEN> <competition> <project>` | Set up workspace with quickstarter |
+| `crunch setup --token <TOKEN> --notebook <competition> <project>` | Set up notebook workspace |
+| `crunch setup-notebook <competition> <TOKEN>` | Alternative notebook setup |
+| `crunch quickstarter` | Deploy a quickstarter into existing workspace |
+| `crunch quickstarter --name "Name"` | Deploy a specific quickstarter |
+| `crunch download` | Download competition data |
+| `crunch download --force` | Re-download data |
+| `crunch download --size-variant small` | Download smaller dataset |
+| `crunch test` | Test solution locally |
+| `crunch test --gpu` | Test with GPU flag |
+| `crunch push -m "message"` | Submit solution |
+| `crunch push --dry` | Dry run (no actual submission) |
+| `crunch convert notebook.ipynb main.py` | Convert notebook to Python |
+| `crunch update-token` | Update the project clone token |
+| `crunch ping` | Check if the CrunchDAO server is online |
 
 ## Quickstarter Phrase Mapping (Complete)
 
 | User Phrase Pattern | Action |
 |---|---|
-| `what competitions are available` | List all competitions from competitions.json |
+| `what competitions are available` | List competitions from competitions.json |
 | `show quickstarters for <name>` | Fetch and list quickstarters from registry |
-| `download <quickstarter> for <name>` | Download quickstarter to workspace |
-| `set up <competition>` | Clone repo, install package, download quickstarter |
+| `set up <competition>` | Run `crunch setup` with token + quickstarter |
+| `set up <competition> notebook` | Run `crunch setup --notebook` |
+| `download the data` | Run `crunch download` |
+| `get the <name> quickstarter` | Run `crunch quickstarter --name` |
 | `explain this quickstarter` | Structured code walkthrough |
 | `how does <competition> work` | Explain competition rules and scoring |
 | `propose improvements` | Analyze and suggest concrete code improvements |
 | `try <technique>` | Rewrite using a specific approach |
-| `test my solution` | Run local evaluator |
-| `backtest on <asset>` | Evaluate on specific asset |
+| `test my solution` | Run `crunch test` |
+| `backtest on <asset>` | Run evaluator on specific asset |
 | `compare with baseline` | Side-by-side evaluation |
-| `submit my solution` | Push to competition platform |
+| `submit my solution` | Run `crunch push` |
+| `push my code` | Run `crunch push` |
