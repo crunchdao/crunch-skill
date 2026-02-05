@@ -9,46 +9,62 @@ This skill guides users through the full CrunchDAO competition lifecycle: settin
 
 ## Setup
 
-### Python environment
+### uv (package manager)
 
-Create a virtual environment for competition work. **Always ask the user for confirmation before running install commands.**
+This skill uses [uv](https://docs.astral.sh/uv/) for fast, reliable Python environment management. Each competition gets its own isolated virtual environment.
+
+Install uv if not already available:
 
 ```bash
-python3 -m venv ~/.crunch/venv
-source ~/.crunch/venv/bin/activate
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+### Per-competition environment
+
+**Every competition must have its own virtual environment.** Competitions can have conflicting dependencies, and isolation prevents breakage. The workspace directory for a competition IS the venv root.
+
+When setting up a competition workspace:
+
+```bash
+mkdir -p ~/.crunch/workspace/<competition>
+cd ~/.crunch/workspace/<competition>
+uv venv
+source .venv/bin/activate
 ```
 
 ### CrunchDAO CLI (Python SDK)
 
-The `crunch` command is the primary tool for all competition operations. Install it inside the virtual environment:
+The `crunch` command is the primary tool for all competition operations. Install it in the competition's venv:
 
 ```bash
-pip install crunch-cli --upgrade
+uv pip install crunch-cli --upgrade
 ```
 
 This provides the `crunch` command with: `setup`, `test`, `push`, `download`, `convert`, `quickstarter`, and more.
 
 ### Jupyter notebook environment
 
-Many quickstarters are Jupyter notebooks. Install the notebook environment:
+Many quickstarters are Jupyter notebooks. Install in the competition's venv:
 
 ```bash
-pip install jupyter notebook ipykernel
+uv pip install jupyter notebook ipykernel
 ```
 
-To register the venv as a Jupyter kernel (so notebooks use the right environment):
+Register the venv as a Jupyter kernel so notebooks use the correct environment:
 
 ```bash
-python -m ipykernel install --user --name crunch --display-name "CrunchDAO"
+python -m ipykernel install --user --name <competition> --display-name "CrunchDAO - <competition>"
 ```
 
 ### Competition-specific packages
 
-Some competitions have their own SDK. Install as needed:
+Some competitions have their own SDK. Install into the competition's venv as needed:
 
 ```bash
-pip install crunch-synth --upgrade   # Synth competition
+uv pip install crunch-synth --upgrade   # Synth competition
 ```
+
+Look up required packages in `competitions.json` under the `packages` array for each competition.
 
 ### Verify setup
 
@@ -56,6 +72,28 @@ pip install crunch-synth --upgrade   # Synth competition
 crunch --version
 jupyter --version
 python -c "import crunch; print('crunch SDK OK')"
+```
+
+### Example: full setup for Synth
+
+```bash
+mkdir -p ~/.crunch/workspace/synth
+cd ~/.crunch/workspace/synth
+uv venv
+source .venv/bin/activate
+uv pip install crunch-cli crunch-synth jupyter ipykernel --upgrade
+python -m ipykernel install --user --name synth --display-name "CrunchDAO - Synth"
+```
+
+### Example: full setup for DataCrunch
+
+```bash
+mkdir -p ~/.crunch/workspace/datacrunch
+cd ~/.crunch/workspace/datacrunch
+uv venv
+source .venv/bin/activate
+uv pip install crunch-cli jupyter ipykernel --upgrade
+python -m ipykernel install --user --name datacrunch --display-name "CrunchDAO - DataCrunch"
 ```
 
 ## Overview
@@ -125,11 +163,15 @@ The `quickstarter.json` contains:
 
 ### How to set up — using `crunch setup`
 
+First, ensure the competition's venv exists and is active (see Setup section). Then:
+
 The user needs a **clone token** from the competition's hub page. Ask for it if not provided.
 
 **Standard setup** (creates a workspace directory with quickstarter selection):
 
 ```bash
+cd ~/.crunch/workspace/<competition>
+source .venv/bin/activate
 crunch setup --token <CLONE_TOKEN> <competition-name> <project-name>
 ```
 
@@ -197,12 +239,12 @@ crunch convert notebook.ipynb main.py --embedded-files  # also export embedded f
 Some competitions have their own SDK repo. Look up in `competitions.json`:
 
 ```bash
-# Clone the competition repo
+# Clone the competition repo into the workspace
 git clone https://github.com/crunchdao/crunch-synth.git
 cd crunch-synth
 
-# Install the SDK
-pip install crunch-synth --upgrade
+# Install the SDK into the competition's venv
+uv pip install crunch-synth --upgrade
 ```
 
 ### Also fetch reference material
