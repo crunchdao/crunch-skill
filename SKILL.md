@@ -1,5 +1,5 @@
 ---
-name: crunch-cli
+name: crunch-protocol-skill
 description: Natural language interface for Crunch Protocol CLI. Maps user requests to CLI commands for managing coordinators, competitions (crunches), rewards, and checkpoints. Supports output formatting for Slack, Telegram, Discord, or plain text.
 ---
 
