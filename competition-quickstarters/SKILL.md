@@ -21,7 +21,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 ### Per-competition environment
 
-**Every competition must have its own virtual environment.** Competitions can have conflicting dependencies, and isolation prevents breakage. The workspace directory for a competition IS the venv root.
+**Every competition must have its own virtual environment.** Competitions can have conflicting dependencies, and isolation prevents breakage.
 
 When setting up a competition workspace:
 
@@ -32,47 +32,65 @@ uv venv
 source .venv/bin/activate
 ```
 
-### CrunchDAO CLI (Python SDK)
+### Clone tokens
 
-The `crunch` command is the primary tool for all competition operations. Install it in the competition's venv:
+**Each competition has its own unique clone token.** Tokens are per-user, per-competition. When a user asks to set up a competition, direct them to the submit page to get their token:
 
-```bash
-uv pip install crunch-cli --upgrade
+```
+https://hub.crunchdao.com/competitions/<competition>/submit
 ```
 
-This provides the `crunch` command with: `setup`, `test`, `push`, `download`, `convert`, `quickstarter`, and more.
-
-### Jupyter notebook environment
-
-Many quickstarters are Jupyter notebooks. Install in the competition's venv:
+Store tokens in `~/.crunch/.tokens` for reuse:
 
 ```bash
-uv pip install jupyter notebook ipykernel
+# ~/.crunch/.tokens
+SYNTH_TOKEN=VqbyFbiETucdJjsV0CHKpj4d
+FALCON_TOKEN=wihApI77M4S6xHFZi0UFieoH
+DATACRUNCH_TOKEN=...
 ```
 
-Register the venv as a Jupyter kernel so notebooks use the correct environment:
+When the user provides a token, store it in this file for future use.
+
+### Full setup flow
+
+The complete setup for any competition follows this pattern:
 
 ```bash
+# 1. Create workspace and venv
+mkdir -p ~/.crunch/workspace/competitions/<competition>
+cd ~/.crunch/workspace/competitions/<competition>
+uv venv
+source .venv/bin/activate
+
+# 2. Install crunch CLI and Jupyter
+uv pip install crunch-cli jupyter ipykernel --upgrade --quiet --progress-bar off
+
+# 3. Register Jupyter kernel for this competition
 python -m ipykernel install --user --name <competition> --display-name "CrunchDAO - <competition>"
+
+# 4. Set up the competition project (token from hub submit page)
+crunch setup <competition> <project-name> --token <TOKEN>
+
+# 5. Enter the project directory
+cd <competition>-<project-name>
 ```
+
+After step 4, the `crunch setup` command will:
+- Create a directory `<competition>-<project-name>/`
+- Prompt the user to select a quickstarter (interactive)
+- Download the competition data
+- Set up the workspace with `main.py` as the entrypoint
 
 ### Competition-specific packages
 
-Some competitions have their own SDK. Install into the competition's venv as needed:
+Some competitions have their own SDK. Install into the competition's venv as needed (in step 2):
 
 ```bash
-uv pip install crunch-synth --upgrade   # Synth competition
+uv pip install crunch-synth --upgrade --quiet --progress-bar off   # Synth competition
+uv pip install birdgame --upgrade --quiet --progress-bar off       # Falcon competition
 ```
 
 Look up required packages for the competition in its repo's `README.md` or `SKILL.md`.
-
-### Verify setup
-
-```bash
-crunch --version
-jupyter --version
-python -c "import crunch; print('crunch SDK OK')"
-```
 
 ### Example: full setup for Synth
 
@@ -81,19 +99,25 @@ mkdir -p ~/.crunch/workspace/competitions/synth
 cd ~/.crunch/workspace/competitions/synth
 uv venv
 source .venv/bin/activate
-uv pip install crunch-cli crunch-synth jupyter ipykernel --upgrade
+uv pip install crunch-cli crunch-synth jupyter ipykernel --upgrade --quiet --progress-bar off
 python -m ipykernel install --user --name synth --display-name "CrunchDAO - Synth"
+# Get token from: https://hub.crunchdao.com/competitions/synth/submit
+crunch setup synth my-project --token <TOKEN>
+cd synth-my-project
 ```
 
-### Example: full setup for DataCrunch
+### Example: full setup for Falcon
 
 ```bash
-mkdir -p ~/.crunch/workspace/competitions/datacrunch
-cd ~/.crunch/workspace/competitions/datacrunch
+mkdir -p ~/.crunch/workspace/competitions/falcon
+cd ~/.crunch/workspace/competitions/falcon
 uv venv
 source .venv/bin/activate
-uv pip install crunch-cli jupyter ipykernel --upgrade
-python -m ipykernel install --user --name datacrunch --display-name "CrunchDAO - DataCrunch"
+uv pip install crunch-cli birdgame jupyter ipykernel --upgrade --quiet --progress-bar off
+python -m ipykernel install --user --name falcon --display-name "CrunchDAO - Falcon"
+# Get token from: https://hub.crunchdao.com/competitions/falcon/submit
+crunch setup falcon my-project --token <TOKEN>
+cd falcon-my-project
 ```
 
 ## Overview
@@ -176,34 +200,32 @@ The `quickstarter.json` contains:
 
 ### How to set up — using `crunch setup`
 
-First, ensure the competition's venv exists and is active (see Setup section). Then:
+First, ensure the competition's venv exists and is active (see Setup section above).
 
-The user needs a **clone token** from the competition's hub page. Ask for it if not provided.
+The user needs a **clone token**. Each competition has its own token. If not provided, direct them to:
+```
+https://hub.crunchdao.com/competitions/<competition>/submit
+```
 
-**Standard setup** (creates a workspace directory with quickstarter selection):
+**Standard setup:**
 
 ```bash
 cd ~/.crunch/workspace/competitions/<competition>
 source .venv/bin/activate
-crunch setup --token <CLONE_TOKEN> <competition-name> <project-name>
+crunch setup <competition> <project-name> --token <TOKEN>
+cd <competition>-<project-name>
 ```
-
-This will:
-1. Create a directory `<competition-name>-<project-name>/`
-2. Prompt the user to select a quickstarter (interactive)
-3. Download the competition data
-4. Set up the workspace with `main.py` as the entrypoint
 
 **Pre-select a quickstarter:**
 
 ```bash
-crunch setup --token <CLONE_TOKEN> --quickstarter-name "NGBoost" <competition-name> <project-name>
+crunch setup <competition> <project-name> --token <TOKEN> --quickstarter-name "NGBoost"
 ```
 
 **Notebook setup** (for Jupyter workflows):
 
 ```bash
-crunch setup --token <CLONE_TOKEN> --notebook <competition-name> <project-name>
+crunch setup <competition> <project-name> --token <TOKEN> --notebook
 ```
 
 In notebook mode:
@@ -214,7 +236,7 @@ In notebook mode:
 **Skip data download** (faster setup):
 
 ```bash
-crunch setup --token <CLONE_TOKEN> --no-data <competition-name> <project-name>
+crunch setup <competition> <project-name> --token <TOKEN> --no-data
 ```
 
 ### Download data separately
@@ -549,8 +571,8 @@ This is useful for adding debug output or loading local-only dependencies.
 
 | Command | Description |
 |---|---|
-| `crunch setup --token <TOKEN> <competition> <project>` | Set up workspace with quickstarter |
-| `crunch setup --token <TOKEN> --notebook <competition> <project>` | Set up notebook workspace |
+| `crunch setup <competition> <project> --token <TOKEN>` | Set up workspace with quickstarter |
+| `crunch setup <competition> <project> --token <TOKEN> --notebook` | Set up notebook workspace |
 | `crunch setup-notebook <competition> <TOKEN>` | Alternative notebook setup |
 | `crunch quickstarter` | Deploy a quickstarter into existing workspace |
 | `crunch quickstarter --name "Name"` | Deploy a specific quickstarter |

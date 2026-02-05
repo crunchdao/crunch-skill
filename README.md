@@ -36,11 +36,14 @@ crunch-cli --version
 # uv (Python package manager)
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Competition workspace (one venv per competition)
+# Competition workspace (one venv per competition — example: Synth)
 mkdir -p ~/.crunch/workspace/competitions/synth && cd ~/.crunch/workspace/competitions/synth
 uv venv && source .venv/bin/activate
-uv pip install crunch-cli crunch-synth jupyter ipykernel --upgrade
+uv pip install crunch-cli crunch-synth jupyter ipykernel --upgrade --quiet --progress-bar off
 python -m ipykernel install --user --name synth --display-name "CrunchDAO - Synth"
+# Get your token from: https://hub.crunchdao.com/competitions/synth/submit
+crunch setup synth my-project --token <YOUR_TOKEN>
+cd synth-my-project
 ```
 
 ## Profile Setup
