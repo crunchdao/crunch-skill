@@ -26,8 +26,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 When setting up a competition workspace:
 
 ```bash
-mkdir -p ~/.crunch/workspace/<competition>
-cd ~/.crunch/workspace/<competition>
+mkdir -p ~/.crunch/workspace/competitions/<competition>
+cd ~/.crunch/workspace/competitions/<competition>
 uv venv
 source .venv/bin/activate
 ```
@@ -77,8 +77,8 @@ python -c "import crunch; print('crunch SDK OK')"
 ### Example: full setup for Synth
 
 ```bash
-mkdir -p ~/.crunch/workspace/synth
-cd ~/.crunch/workspace/synth
+mkdir -p ~/.crunch/workspace/competitions/synth
+cd ~/.crunch/workspace/competitions/synth
 uv venv
 source .venv/bin/activate
 uv pip install crunch-cli crunch-synth jupyter ipykernel --upgrade
@@ -88,8 +88,8 @@ python -m ipykernel install --user --name synth --display-name "CrunchDAO - Synt
 ### Example: full setup for DataCrunch
 
 ```bash
-mkdir -p ~/.crunch/workspace/datacrunch
-cd ~/.crunch/workspace/datacrunch
+mkdir -p ~/.crunch/workspace/competitions/datacrunch
+cd ~/.crunch/workspace/competitions/datacrunch
 uv venv
 source .venv/bin/activate
 uv pip install crunch-cli jupyter ipykernel --upgrade
@@ -170,7 +170,7 @@ The user needs a **clone token** from the competition's hub page. Ask for it if 
 **Standard setup** (creates a workspace directory with quickstarter selection):
 
 ```bash
-cd ~/.crunch/workspace/<competition>
+cd ~/.crunch/workspace/competitions/<competition>
 source .venv/bin/activate
 crunch setup --token <CLONE_TOKEN> <competition-name> <project-name>
 ```

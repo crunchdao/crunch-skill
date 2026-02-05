@@ -38,7 +38,7 @@ crunch-cli --version
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Competition workspace (one venv per competition)
-mkdir -p ~/.crunch/workspace/synth && cd ~/.crunch/workspace/synth
+mkdir -p ~/.crunch/workspace/competitions/synth && cd ~/.crunch/workspace/competitions/synth
 uv venv && source .venv/bin/activate
 uv pip install crunch-cli crunch-synth jupyter ipykernel --upgrade
 python -m ipykernel install --user --name synth --display-name "CrunchDAO - Synth"
