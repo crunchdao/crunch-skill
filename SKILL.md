@@ -63,6 +63,19 @@ For speed and consistency, map these phrases **directly** to CLI commands withou
 | `coordinator config` | `crunch-coordinator get-config` |
 | `checkpoint for <name>` | `crunch-coordinator crunch checkpoint-get-current "<name>"` |
 | `current checkpoint <name>` | `crunch-coordinator crunch checkpoint-get-current "<name>"` |
+| `set certificate` | `crunch-coordinator cert set` |
+| `set cert` | `crunch-coordinator cert set` |
+| `update certificate` | `crunch-coordinator cert set` |
+| `get certificate` | `crunch-coordinator cert get` |
+| `get cert` | `crunch-coordinator cert get` |
+| `show certificate` | `crunch-coordinator cert get` |
+| `my certificate` | `crunch-coordinator cert get` |
+| `sweep tokens <name>` | `crunch-coordinator crunch sweep-token-accounts "<name>"` |
+| `sweep token accounts <name>` | `crunch-coordinator crunch sweep-token-accounts "<name>"` |
+| `check prize accounts <name>` | `crunch-coordinator crunch check-prize-atas "<name>"` |
+| `check atas <name>` | `crunch-coordinator crunch check-prize-atas "<name>"` |
+| `map cruncher addresses` | `crunch-coordinator crunch map-cruncher-addresses` |
+| `emission checkpoint add` | `crunch-coordinator crunch emission-checkpoint-add` |
 
 ### Name Extraction Rules
 
@@ -98,6 +111,12 @@ For speed and consistency, map these phrases **directly** to CLI commands withou
 | `reset-hotkey` | Reset SMP hotkey | `crunch-coordinator reset-hotkey` |
 | `set-emission-config` | Set emission percentages | `crunch-coordinator set-emission-config <coord%> <staker%> <fund%>` |
 
+### Certificate Commands
+| Command | Description | Usage |
+|---------|-------------|-------|
+| `cert set <pubkey> [--slot N]` | Set certificate hash | `crunch-coordinator cert set "MIIBIjAN..." [--slot 0\|1]` |
+| `cert get [owner]` | Get certificate info | `crunch-coordinator cert get [address]` |
+
 ### Crunch Commands (Competition Management)
 | Command | Description | Usage |
 |---------|-------------|-------|
@@ -110,6 +129,10 @@ For speed and consistency, map these phrases **directly** to CLI commands withou
 | `crunch margin <name>` | Execute margin payout | `crunch-coordinator crunch margin "Name"` |
 | `crunch drain <name>` | Drain remaining USDC | `crunch-coordinator crunch drain "Name"` |
 | `crunch get-cruncher` | Get cruncher details | `crunch-coordinator crunch get-cruncher "CrunchName" <wallet>` |
+| `crunch sweep-token-accounts` | Sweep tokens to vault | `crunch-coordinator crunch sweep-token-accounts "Name"` |
+| `crunch check-prize-atas` | Check USDC accounts | `crunch-coordinator crunch check-prize-atas "Name"` |
+| `crunch map-cruncher-addresses` | Map cruncher addresses | `crunch-coordinator crunch map-cruncher-addresses "CoordName"` |
+| `crunch emission-checkpoint-add` | Add emission checkpoint | `crunch-coordinator crunch emission-checkpoint-add "CoordName" <amount>` |
 
 ### Checkpoint Commands
 | Command | Description | Usage |
