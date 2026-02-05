@@ -2,7 +2,7 @@
 
 ## Package Information
 - **Name:** `@crunchdao/coordinator-cli`
-- **Binary:** `crunch-coordinator`
+- **Binary:** `crunch-cli`
 - **Version:** 4.3.2+
 
 ## Installation
@@ -26,9 +26,9 @@ Location: `~/.crunch/config.json`
 
 ### Config Commands
 ```bash
-crunch-coordinator config set <key> <value>
-crunch-coordinator config show
-crunch-coordinator config use-profile <profile>
+crunch-cli config set <key> <value>
+crunch-cli config show
+crunch-cli config use-profile <profile>
 ```
 
 ## Network Options
@@ -44,11 +44,11 @@ crunch-coordinator config use-profile <profile>
 
 ### Coordinator Management
 
-#### `register <name>`
+#### `coordinator register <name>`
 Register a new coordinator with the protocol.
 
 ```bash
-crunch-coordinator register "AI Research Lab"
+crunch-cli coordinator register "AI Research Lab"
 ```
 
 **Requirements:**
@@ -58,15 +58,15 @@ crunch-coordinator register "AI Research Lab"
 
 ---
 
-#### `get [owner]`
+#### `coordinator get [owner]`
 Get coordinator details by owner address.
 
 ```bash
 # Current wallet
-crunch-coordinator get
+crunch-cli coordinator get
 
 # Specific address
-crunch-coordinator get "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"
+crunch-cli coordinator get "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"
 ```
 
 **Output Fields:**
@@ -78,11 +78,11 @@ crunch-coordinator get "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"
 
 ---
 
-#### `get-config`
+#### `coordinator get-config`
 Get coordinator configuration from the protocol.
 
 ```bash
-crunch-coordinator get-config
+crunch-cli coordinator get-config
 ```
 
 **Output Fields:**
@@ -92,20 +92,20 @@ crunch-coordinator get-config
 
 ---
 
-#### `reset-hotkey`
+#### `coordinator reset-hotkey`
 Reset/regenerate the SMP hotkey for the coordinator.
 
 ```bash
-crunch-coordinator reset-hotkey
+crunch-cli coordinator reset-hotkey
 ```
 
 ---
 
-#### `set-emission-config <coordinatorPct> <stakerPct> <crunchFundPct>`
+#### `coordinator set-emission-config <coordinatorPct> <stakerPct> <crunchFundPct>`
 Set emission configuration percentages.
 
 ```bash
-crunch-coordinator set-emission-config 50 40 10
+crunch-cli coordinator set-emission-config 50 40 10
 ```
 
 **Note:** Percentages must sum to 100.
@@ -119,10 +119,10 @@ List all crunches for a coordinator.
 
 ```bash
 # Current wallet
-crunch-coordinator crunches list
+crunch-cli crunches list
 
 # Specific coordinator
-crunch-coordinator crunches list "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"
+crunch-cli crunches list "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"
 ```
 
 **Output:**
@@ -135,7 +135,7 @@ crunch-coordinator crunches list "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"
 Create a new crunch competition.
 
 ```bash
-crunch-coordinator crunch create "Q4 2024 Trading Challenge" 10000 5
+crunch-cli crunch create "Q4 2024 Trading Challenge" 10000 5
 ```
 
 **Arguments:**
@@ -149,7 +149,7 @@ crunch-coordinator crunch create "Q4 2024 Trading Challenge" 10000 5
 Get detailed information about a competition.
 
 ```bash
-crunch-coordinator crunch get "Synth"
+crunch-cli crunch get "Synth"
 ```
 
 **Output Fields:**
@@ -167,7 +167,7 @@ crunch-coordinator crunch get "Synth"
 Start a competition (transitions from Created to Active).
 
 ```bash
-crunch-coordinator crunch start "Q4 2024 Trading Challenge"
+crunch-cli crunch start "Q4 2024 Trading Challenge"
 ```
 
 **Requirements:**
@@ -180,7 +180,7 @@ crunch-coordinator crunch start "Q4 2024 Trading Challenge"
 End a competition (transitions from Active to Ended).
 
 ```bash
-crunch-coordinator crunch end "Q4 2024 Trading Challenge"
+crunch-cli crunch end "Q4 2024 Trading Challenge"
 ```
 
 **Requirements:**
@@ -193,7 +193,7 @@ crunch-coordinator crunch end "Q4 2024 Trading Challenge"
 Get cruncher details for a specific competition.
 
 ```bash
-crunch-coordinator crunch get-cruncher "Synth" "5abc..."
+crunch-cli crunch get-cruncher "Synth" "5abc..."
 ```
 
 **Output:**
@@ -210,7 +210,7 @@ crunch-coordinator crunch get-cruncher "Synth" "5abc..."
 Deposit USDC rewards to a competition.
 
 ```bash
-crunch-coordinator crunch deposit-reward "Synth" 5000
+crunch-cli crunch deposit-reward "Synth" 5000
 ```
 
 **Requirements:**
@@ -223,7 +223,7 @@ crunch-coordinator crunch deposit-reward "Synth" 5000
 Execute margin payout for a competition.
 
 ```bash
-crunch-coordinator crunch margin "Synth"
+crunch-cli crunch margin "Synth"
 ```
 
 ---
@@ -232,7 +232,7 @@ crunch-coordinator crunch margin "Synth"
 Drain remaining USDC from a competition.
 
 ```bash
-crunch-coordinator crunch drain "Synth"
+crunch-cli crunch drain "Synth"
 ```
 
 **Use Case:** Recover unspent funds after competition ends
@@ -245,10 +245,10 @@ crunch-coordinator crunch drain "Synth"
 Create a checkpoint for payout distribution.
 
 ```bash
-crunch-coordinator crunch checkpoint-create "Synth" "./prizes.json"
+crunch-cli crunch checkpoint-create "Synth" "./prizes.json"
 
 # Dry run (no execution)
-crunch-coordinator crunch checkpoint-create "Synth" "./prizes.json" --dryrun
+crunch-cli crunch checkpoint-create "Synth" "./prizes.json" --dryrun
 ```
 
 **Prize File Format (JSON Lines):**
@@ -264,7 +264,7 @@ crunch-coordinator crunch checkpoint-create "Synth" "./prizes.json" --dryrun
 Get the current checkpoint information.
 
 ```bash
-crunch-coordinator crunch checkpoint-get-current "Synth"
+crunch-cli crunch checkpoint-get-current "Synth"
 ```
 
 **Output:**
@@ -279,7 +279,7 @@ crunch-coordinator crunch checkpoint-get-current "Synth"
 Get checkpoint by index.
 
 ```bash
-crunch-coordinator crunch checkpoint-get "Synth" 3
+crunch-cli crunch checkpoint-get "Synth" 3
 ```
 
 ---
@@ -288,7 +288,7 @@ crunch-coordinator crunch checkpoint-get "Synth" 3
 Get the Solana address of a checkpoint account.
 
 ```bash
-crunch-coordinator crunch checkpoint-get-address "Synth" 3
+crunch-cli crunch checkpoint-get-address "Synth" 3
 ```
 
 ---
@@ -300,10 +300,10 @@ Check if crunchers have USDC Associated Token Accounts.
 
 ```bash
 # Check only
-crunch-coordinator crunch check-prize-atas "Synth" "./prizes.json"
+crunch-cli crunch check-prize-atas "Synth" "./prizes.json"
 
 # Create missing ATAs
-crunch-coordinator crunch check-prize-atas "Synth" "./prizes.json" -c
+crunch-cli crunch check-prize-atas "Synth" "./prizes.json" -c
 ```
 
 ---
@@ -312,7 +312,7 @@ crunch-coordinator crunch check-prize-atas "Synth" "./prizes.json" -c
 Set fund configuration for a crunch.
 
 ```bash
-crunch-coordinator crunch set-fund-config "Synth" 70 20 10
+crunch-cli crunch set-fund-config "Synth" 70 20 10
 ```
 
 **Note:** Percentages must sum to 100.
@@ -323,7 +323,7 @@ crunch-coordinator crunch set-fund-config "Synth" 70 20 10
 Add an emission checkpoint to the coordinator pool.
 
 ```bash
-crunch-coordinator crunch emission-checkpoint-add "./emissions.json"
+crunch-cli crunch emission-checkpoint-add "./emissions.json"
 ```
 
 ---
@@ -332,7 +332,7 @@ crunch-coordinator crunch emission-checkpoint-add "./emissions.json"
 Map cruncher wallets into the coordinator pool address index.
 
 ```bash
-crunch-coordinator crunch map-cruncher-addresses "CrunchAddr..." "Wallet1..." "Wallet2..."
+crunch-cli crunch map-cruncher-addresses "CrunchAddr..." "Wallet1..." "Wallet2..."
 ```
 
 ---
@@ -342,11 +342,11 @@ crunch-coordinator crunch map-cruncher-addresses "CrunchAddr..." "Wallet1..." "W
 For production environments, use multisig for critical operations:
 
 ```bash
-crunch-coordinator --multisig <SQUADS_MULTISIG_ADDR> <command>
+crunch-cli --multisig <SQUADS_MULTISIG_ADDR> <command>
 ```
 
 **Multisig-Compatible Commands:**
-- `register`
+- `coordinator register`
 - `crunch create`
 - `crunch start`
 - `crunch end`
@@ -355,7 +355,7 @@ crunch-coordinator --multisig <SQUADS_MULTISIG_ADDR> <command>
 
 **Example:**
 ```bash
-crunch-coordinator --multisig 9WzDX... crunch create "Production Competition" 50000 3
+crunch-cli --multisig 9WzDX... crunch create "Production Competition" 50000 3
 ```
 
 This creates a Squads proposal instead of direct execution.
@@ -367,7 +367,7 @@ This creates a Squads proposal instead of direct execution.
 For programmatic parsing, use JSON output:
 
 ```bash
-crunch-coordinator -o json crunch get "Synth"
+crunch-cli -o json crunch get "Synth"
 ```
 
 All commands support `-o json` for structured output.
@@ -376,12 +376,12 @@ All commands support `-o json` for structured output.
 
 ## Typical Competition Workflow
 
-1. **Register:** `crunch-coordinator register "My Coordinator"`
+1. **Register:** `crunch-cli coordinator register "My Coordinator"`
 2. **Get Approved:** Wait for admin approval
-3. **Create:** `crunch-coordinator crunch create "My Competition" 10000 2`
-4. **Fund:** `crunch-coordinator crunch deposit-reward "My Competition" 10000`
-5. **Start:** `crunch-coordinator crunch start "My Competition"`
-6. **Monitor:** `crunch-coordinator crunch get "My Competition"`
-7. **Checkpoint:** `crunch-coordinator crunch checkpoint-create "My Competition" prizes.json`
-8. **End:** `crunch-coordinator crunch end "My Competition"`
-9. **Drain:** `crunch-coordinator crunch drain "My Competition"`
+3. **Create:** `crunch-cli crunch create "My Competition" 10000 2`
+4. **Fund:** `crunch-cli crunch deposit-reward "My Competition" 10000`
+5. **Start:** `crunch-cli crunch start "My Competition"`
+6. **Monitor:** `crunch-cli crunch get "My Competition"`
+7. **Checkpoint:** `crunch-cli crunch checkpoint-create "My Competition" prizes.json`
+8. **End:** `crunch-cli crunch end "My Competition"`
+9. **Drain:** `crunch-cli crunch drain "My Competition"`

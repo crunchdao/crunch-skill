@@ -5,7 +5,7 @@ description: Natural language interface for Crunch Protocol coordinator-cli. Map
 
 # Crunch Protocol Coordinator CLI Skill
 
-This skill translates natural language queries into `crunch-coordinator` CLI commands and formats outputs for various mediums.
+This skill translates natural language queries into `crunch-cli` CLI commands and formats outputs for various mediums.
 
 ## Setup
 
@@ -16,7 +16,7 @@ npm install -g @crunchdao/coordinator-cli
 
 Verify installation:
 ```bash
-crunch-coordinator --version
+crunch-cli --version
 ```
 
 Ask the user if they want to store different profiles. Profiles can be added in conversations and include following information: 
@@ -49,33 +49,33 @@ For speed and consistency, map these phrases **directly** to CLI commands withou
 
 | User Phrase Pattern | CLI Command |
 |---------------------|-------------|
-| `get info about crunch <name>` | `crunch-coordinator crunch get "<name>"` |
-| `get crunch <name>` | `crunch-coordinator crunch get "<name>"` |
-| `show crunch <name>` | `crunch-coordinator crunch get "<name>"` |
-| `crunch details <name>` | `crunch-coordinator crunch get "<name>"` |
-| `get coordinator <address>` | `crunch-coordinator get "<address>"` |
-| `show coordinator` | `crunch-coordinator get` |
-| `my coordinator` | `crunch-coordinator get` |
-| `list crunches` | `crunch-coordinator crunches list` |
-| `list my crunches` | `crunch-coordinator crunches list` |
-| `show all crunches` | `crunch-coordinator crunches list` |
-| `get config` | `crunch-coordinator get-config` |
-| `coordinator config` | `crunch-coordinator get-config` |
-| `checkpoint for <name>` | `crunch-coordinator crunch checkpoint-get-current "<name>"` |
-| `current checkpoint <name>` | `crunch-coordinator crunch checkpoint-get-current "<name>"` |
-| `set certificate` | `crunch-coordinator cert set` |
-| `set cert` | `crunch-coordinator cert set` |
-| `update certificate` | `crunch-coordinator cert set` |
-| `get certificate` | `crunch-coordinator cert get` |
-| `get cert` | `crunch-coordinator cert get` |
-| `show certificate` | `crunch-coordinator cert get` |
-| `my certificate` | `crunch-coordinator cert get` |
-| `sweep tokens <name>` | `crunch-coordinator crunch sweep-token-accounts "<name>"` |
-| `sweep token accounts <name>` | `crunch-coordinator crunch sweep-token-accounts "<name>"` |
-| `check prize accounts <name>` | `crunch-coordinator crunch check-prize-atas "<name>"` |
-| `check atas <name>` | `crunch-coordinator crunch check-prize-atas "<name>"` |
-| `map cruncher addresses` | `crunch-coordinator crunch map-cruncher-addresses` |
-| `emission checkpoint add` | `crunch-coordinator crunch emission-checkpoint-add` |
+| `get info about crunch <name>` | `crunch-cli crunch get "<name>"` |
+| `get crunch <name>` | `crunch-cli crunch get "<name>"` |
+| `show crunch <name>` | `crunch-cli crunch get "<name>"` |
+| `crunch details <name>` | `crunch-cli crunch get "<name>"` |
+| `get coordinator <address>` | `crunch-cli coordinator get "<address>"` |
+| `show coordinator` | `crunch-cli coordinator get` |
+| `my coordinator` | `crunch-cli coordinator get` |
+| `list crunches` | `crunch-cli crunches list` |
+| `list my crunches` | `crunch-cli crunches list` |
+| `show all crunches` | `crunch-cli crunches list` |
+| `get config` | `crunch-cli coordinator get-config` |
+| `coordinator config` | `crunch-cli coordinator get-config` |
+| `checkpoint for <name>` | `crunch-cli crunch checkpoint-get-current "<name>"` |
+| `current checkpoint <name>` | `crunch-cli crunch checkpoint-get-current "<name>"` |
+| `set certificate` | `crunch-cli coordinator cert set` |
+| `set cert` | `crunch-cli coordinator cert set` |
+| `update certificate` | `crunch-cli coordinator cert set` |
+| `get certificate` | `crunch-cli coordinator cert get` |
+| `get cert` | `crunch-cli coordinator cert get` |
+| `show certificate` | `crunch-cli coordinator cert get` |
+| `my certificate` | `crunch-cli coordinator cert get` |
+| `sweep tokens <name>` | `crunch-cli crunch sweep-token-accounts "<name>"` |
+| `sweep token accounts <name>` | `crunch-cli crunch sweep-token-accounts "<name>"` |
+| `check prize accounts <name>` | `crunch-cli crunch check-prize-atas "<name>"` |
+| `check atas <name>` | `crunch-cli crunch check-prize-atas "<name>"` |
+| `map cruncher addresses` | `crunch-cli crunch map-cruncher-addresses` |
+| `emission checkpoint add` | `crunch-cli crunch emission-checkpoint-add` |
 
 ### Name Extraction Rules
 
@@ -95,7 +95,7 @@ For speed and consistency, map these phrases **directly** to CLI commands withou
 
 3. **Execute** the command:
    ```bash
-   crunch-coordinator [options] <command> [arguments]
+   crunch-cli [options] <command> [arguments]
    ```
 
 4. **Format** output for the specified medium (see Output Formatting below)
@@ -105,41 +105,41 @@ For speed and consistency, map these phrases **directly** to CLI commands withou
 ### Coordinator Commands
 | Command | Description | Usage |
 |---------|-------------|-------|
-| `get [owner]` | Get coordinator details | `crunch-coordinator get [address]` |
-| `get-config` | Get coordinator configuration | `crunch-coordinator get-config` |
-| `register <name>` | Register new coordinator | `crunch-coordinator register "Name"` |
-| `reset-hotkey` | Reset SMP hotkey | `crunch-coordinator reset-hotkey` |
-| `set-emission-config` | Set emission percentages | `crunch-coordinator set-emission-config <coord%> <staker%> <fund%>` |
+| `coordinator get [owner]` | Get coordinator details | `crunch-cli coordinator get [address]` |
+| `coordinator get-config` | Get coordinator configuration | `crunch-cli coordinator get-config` |
+| `coordinator register <name>` | Register new coordinator | `crunch-cli coordinator register "Name"` |
+| `coordinator reset-hotkey` | Reset SMP hotkey | `crunch-cli coordinator reset-hotkey` |
+| `coordinator set-emission-config` | Set emission percentages | `crunch-cli coordinator set-emission-config <coord%> <staker%> <fund%>` |
 
 ### Certificate Commands
 | Command | Description | Usage |
 |---------|-------------|-------|
-| `cert set <pubkey> [--slot N]` | Set certificate hash | `crunch-coordinator cert set "MIIBIjAN..." [--slot 0\|1]` |
-| `cert get [owner]` | Get certificate info | `crunch-coordinator cert get [address]` |
+| `coordinator cert set <pubkey> [--slot N]` | Set certificate hash | `crunch-cli coordinator cert set "MIIBIjAN..." [--slot 0\|1]` |
+| `coordinator cert get [owner]` | Get certificate info | `crunch-cli coordinator cert get [address]` |
 
 ### Crunch Commands (Competition Management)
 | Command | Description | Usage |
 |---------|-------------|-------|
-| `crunch get <name>` | Get crunch details | `crunch-coordinator crunch get "Synth"` |
-| `crunches list [wallet]` | List all crunches | `crunch-coordinator crunches list` |
-| `crunch create` | Create new crunch | `crunch-coordinator crunch create "Name" <payoutUSDC> [maxModels]` |
-| `crunch start <name>` | Start competition | `crunch-coordinator crunch start "Name"` |
-| `crunch end <name>` | End competition | `crunch-coordinator crunch end "Name"` |
-| `crunch deposit-reward` | Deposit USDC | `crunch-coordinator crunch deposit-reward "Name" <amount>` |
-| `crunch margin <name>` | Execute margin payout | `crunch-coordinator crunch margin "Name"` |
-| `crunch drain <name>` | Drain remaining USDC | `crunch-coordinator crunch drain "Name"` |
-| `crunch get-cruncher` | Get cruncher details | `crunch-coordinator crunch get-cruncher "CrunchName" <wallet>` |
-| `crunch sweep-token-accounts` | Sweep tokens to vault | `crunch-coordinator crunch sweep-token-accounts "Name"` |
-| `crunch check-prize-atas` | Check USDC accounts | `crunch-coordinator crunch check-prize-atas "Name"` |
-| `crunch map-cruncher-addresses` | Map cruncher addresses | `crunch-coordinator crunch map-cruncher-addresses "CoordName"` |
-| `crunch emission-checkpoint-add` | Add emission checkpoint | `crunch-coordinator crunch emission-checkpoint-add "CoordName" <amount>` |
+| `crunch get <name>` | Get crunch details | `crunch-cli crunch get "Synth"` |
+| `crunches list [wallet]` | List all crunches | `crunch-cli crunches list` |
+| `crunch create` | Create new crunch | `crunch-cli crunch create "Name" <payoutUSDC> [maxModels]` |
+| `crunch start <name>` | Start competition | `crunch-cli crunch start "Name"` |
+| `crunch end <name>` | End competition | `crunch-cli crunch end "Name"` |
+| `crunch deposit-reward` | Deposit USDC | `crunch-cli crunch deposit-reward "Name" <amount>` |
+| `crunch margin <name>` | Execute margin payout | `crunch-cli crunch margin "Name"` |
+| `crunch drain <name>` | Drain remaining USDC | `crunch-cli crunch drain "Name"` |
+| `crunch get-cruncher` | Get cruncher details | `crunch-cli crunch get-cruncher "CrunchName" <wallet>` |
+| `crunch sweep-token-accounts` | Sweep tokens to vault | `crunch-cli crunch sweep-token-accounts "Name"` |
+| `crunch check-prize-atas` | Check USDC accounts | `crunch-cli crunch check-prize-atas "Name"` |
+| `crunch map-cruncher-addresses` | Map cruncher addresses | `crunch-cli crunch map-cruncher-addresses "CoordName"` |
+| `crunch emission-checkpoint-add` | Add emission checkpoint | `crunch-cli crunch emission-checkpoint-add "CoordName" <amount>` |
 
 ### Checkpoint Commands
 | Command | Description | Usage |
 |---------|-------------|-------|
-| `crunch checkpoint-create` | Create checkpoint | `crunch-coordinator crunch checkpoint-create "Name" prizes.json [--dryrun]` |
-| `crunch checkpoint-get-current` | Current checkpoint | `crunch-coordinator crunch checkpoint-get-current "Name"` |
-| `crunch checkpoint-get` | Get checkpoint by index | `crunch-coordinator crunch checkpoint-get "Name" <index>` |
+| `crunch checkpoint-create` | Create checkpoint | `crunch-cli crunch checkpoint-create "Name" prizes.json [--dryrun]` |
+| `crunch checkpoint-get-current` | Current checkpoint | `crunch-cli crunch checkpoint-get-current "Name"` |
+| `crunch checkpoint-get` | Get checkpoint by index | `crunch-cli crunch checkpoint-get "Name" <index>` |
 
 ### Global Options
 - `-u, --url <network>` - Network: mainnet-beta, devnet, localhost (default: from config)
@@ -210,23 +210,23 @@ If a command fails:
 
 ### "Get me info about crunch Synth"
 ```bash
-crunch-coordinator crunch get "Synth"
+crunch-cli crunch get "Synth"
 ```
 
 ### "Show my coordinator on mainnet"
 ```bash
-crunch-coordinator -u mainnet-beta get
+crunch-cli -u mainnet-beta coordinator get
 ```
 
 ### "List all crunches for slack"
 ```bash
-crunch-coordinator crunches list
+crunch-cli crunches list
 ```
 Then format output for Slack.
 
 ### "What's the current checkpoint for the Chaos competition?"
 ```bash
-crunch-coordinator crunch checkpoint-get-current "Chaos"
+crunch-cli crunch checkpoint-get-current "Chaos"
 ```
 
 ## Reference Documentation
