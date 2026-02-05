@@ -1,6 +1,6 @@
 ---
-name: coordinator-cli
-description: Natural language interface for Crunch Protocol coordinator-cli. Maps user requests to CLI commands for managing coordinators, competitions (crunches), rewards, and checkpoints. Supports output formatting for Slack, Telegram, Discord, or plain text.
+name: crunch-cli
+description: Natural language interface for Crunch Protocol CLI. Maps user requests to CLI commands for managing coordinators, competitions (crunches), rewards, and checkpoints. Supports output formatting for Slack, Telegram, Discord, or plain text.
 ---
 
 # Crunch Protocol CLI Skill
