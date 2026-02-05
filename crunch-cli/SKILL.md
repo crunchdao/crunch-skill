@@ -1,6 +1,6 @@
 ---
-name: crunch-protocol-skill
-description: Natural language interface for Crunch Protocol CLI. Maps user requests to CLI commands for managing coordinators, competitions (crunches), rewards, and checkpoints. Supports output formatting for Slack, Telegram, Discord, or plain text.
+name: crunch-cli
+description: Natural language interface for CrunchDAO's crunch-cli. Translates plain-English requests into CLI commands for managing coordinators, competitions (crunches), rewards, checkpoints, and certificates on Solana. Supports profiles and output formatting for Slack, Telegram, Discord, or plain text.
 ---
 
 # Crunch Protocol CLI Skill
@@ -21,7 +21,7 @@ crunch-cli --version
 
 ## Profiles
 
-Profiles are stored in `profiles.json` (next to this file). Each profile maps a short name to a set of CLI flags so users can say things like _"list crunches for m-jeremy"_ instead of typing full addresses every time.
+Profiles are stored in `profiles.json` (in the repo root, next to this skill's directory). Each profile maps a short name to a set of CLI flags so users can say things like _"list crunches for m-jeremy"_ instead of typing full addresses every time.
 
 ### Profile file format
 
@@ -56,14 +56,14 @@ Profiles are stored in `profiles.json` (next to this file). Each profile maps a 
 
 When a user references a profile name:
 
-1. Read `profiles.json` from the skill directory.
+1. Read `profiles.json` from the repo root (parent of this skill directory).
 2. Look up the profile by name (case-insensitive match).
 3. Map each non-empty field to its CLI flag (see table above).
 4. Prepend the flags to whatever command is being built.
 
 **Example:** User says _"list crunches for m-jeremy"_
 
-1. Load profile `mainnet-proposer` → `{ url: "https://mainnet...", wallet: "/path/...", multisigAddress: "9WzDX..." }`
+1. Load profile `m-jeremy` → `{ url: "https://mainnet...", wallet: "/path/...", multisigAddress: "9WzDX..." }`
 2. Build: `crunch-cli -u "https://mainnet..." -w "/path/..." -m "9WzDX..." crunches list`
 
 **Example:** User says _"show coordinator for devnet"_

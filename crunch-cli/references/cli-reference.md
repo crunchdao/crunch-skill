@@ -1,7 +1,7 @@
 # Coordinator CLI Full Reference
 
 ## Package Information
-- **Name:** `@crunchdao/coordinator-cli`
+- **Name:** `@crunchdao/crunch-cli`
 - **Binary:** `crunch-cli`
 - **Version:** 4.3.2+
 
