@@ -8,7 +8,7 @@
 ## Installation
 
 ```bash
-npm install -g @crunchdao/coordinator-cli
+npm install -g @crunchdao/crunch-cli
 ```
 
 ## Configuration

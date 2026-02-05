@@ -3,7 +3,7 @@ name: coordinator-cli
 description: Natural language interface for Crunch Protocol coordinator-cli. Maps user requests to CLI commands for managing coordinators, competitions (crunches), rewards, and checkpoints. Supports output formatting for Slack, Telegram, Discord, or plain text.
 ---
 
-# Crunch Protocol Coordinator CLI Skill
+# Crunch Protocol CLI Skill
 
 This skill translates natural language queries into `crunch-cli` CLI commands and formats outputs for various mediums.
 
@@ -11,7 +11,7 @@ This skill translates natural language queries into `crunch-cli` CLI commands an
 
 Ensure the CLI is installed globally:
 ```bash
-npm install -g @crunchdao/coordinator-cli
+npm install -g @crunchdao/crunch-cli
 ```
 
 Verify installation:
@@ -37,7 +37,7 @@ wallet:
 coordinator: 
   The coordinator address to use. If this is set default to looking for this coordinators crunch for example. 
 
-Store these profiles locally for lookup. When a user says; Get all the crunches of profile m-jeremy it would look for the profile and insert the values in the CLI. 
+Store these profiles locally for lookup. When a user says; Get all the crunches of profile <profile-name> it would look for the profile and insert the values in the CLI. 
 
 It is also possible to set the profile, eg: user coordinator profile m-jeremy
 
@@ -79,8 +79,7 @@ For speed and consistency, map these phrases **directly** to CLI commands withou
 
 ### Name Extraction Rules
 
-- Crunch names often contain spaces: "Synth", "Q4 2024 Challenge", "AI Trading Competition"
-- When a name is provided, wrap it in quotes in the CLI command
+- When a crunch name is provided, wrap it in quotes in the CLI command
 - Common competition names: Crunch, Competition, Tournament, Challenge
 
 ## Execution Pattern
