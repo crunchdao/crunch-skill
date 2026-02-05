@@ -1,5 +1,5 @@
 ---
-name: coordinator-cli
+name: crunch-cli
 description: Natural language interface for CrunchDAO's crunch-cli. Translates plain-English requests into CLI commands for managing coordinators, competitions (crunches), rewards, checkpoints, and certificates on Solana. Supports profiles and output formatting for Slack, Telegram, Discord, or plain text.
 ---
 

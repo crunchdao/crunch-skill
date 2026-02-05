@@ -9,7 +9,7 @@ An AI skill for [CrunchDAO](https://www.crunchdao.com/) that does two things:
 
 ```
 crunch-skill/
-├── coordinator-cli/                  # Skill: Solana coordinator management
+├── crunch-cli/                       # Skill: Solana coordinator management
 │   ├── SKILL.md
 │   └── references/
 │       └── cli-reference.md
@@ -24,7 +24,7 @@ Two independent skills, each with their own `SKILL.md`:
 
 | Skill | Description |
 |---|---|
-| `coordinator-cli` | Translates plain English → `crunch-cli` commands for managing coordinators, crunches, rewards, checkpoints |
+| `crunch-cli` | Translates plain English → `crunch-cli` commands for managing coordinators, crunches, rewards, checkpoints |
 | `competition-quickstarters` | Discover, explain, improve, backtest, and submit competition solutions |
 
 ## Prerequisites
