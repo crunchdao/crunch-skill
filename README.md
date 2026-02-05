@@ -1,4 +1,4 @@
-# Crunch Protocol CLI Skill
+# Crunch Protocol Skill
 
 An AI skill that provides a natural language interface to the [Crunch Protocol](https://www.crunchdao.com/) CLI (`crunch-cli`). It translates plain-English requests into the correct CLI commands for managing coordinators, competitions (crunches), rewards, checkpoints, and certificates on Solana.
 
@@ -10,8 +10,6 @@ Supports output formatting for Slack, Telegram, Discord, or plain text.
 |---|---|
 | `SKILL.md` | The skill definition — command mappings, profile resolution, output formatting rules |
 | `references/cli-reference.md` | Full `crunch-cli` command reference |
-| `profiles.json.example` | Example profile configuration |
-| `profiles.json` | Your local profiles (git-ignored) |
 
 ## Prerequisites
 
