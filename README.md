@@ -14,8 +14,7 @@ crunch-skill/
 │   └── references/
 │       └── cli-reference.md
 ├── competition-quickstarters/        # Skill: competition participation
-│   ├── SKILL.md
-│   └── competitions.json
+│   └── SKILL.md
 ├── profiles.json.example            # Example profile configuration
 └── profiles.json                    # Your local profiles (git-ignored)
 ```

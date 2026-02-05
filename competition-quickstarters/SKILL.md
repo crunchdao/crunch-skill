@@ -64,7 +64,7 @@ Some competitions have their own SDK. Install into the competition's venv as nee
 uv pip install crunch-synth --upgrade   # Synth competition
 ```
 
-Look up required packages in `competitions.json` under the `packages` array for each competition.
+Look up required packages for the competition in its repo's `README.md` or `SKILL.md`.
 
 ### Verify setup
 
@@ -100,21 +100,34 @@ python -m ipykernel install --user --name datacrunch --display-name "CrunchDAO -
 
 Each CrunchDAO competition has **quickstarters** — ready-to-run notebooks and code showing how to participate. The `crunch` CLI handles workspace setup, data download, quickstarter selection, local testing, and submission.
 
-The mapping from competition names to repos, packages, and tools lives in [`competitions.json`](competitions.json) next to this file.
-
 ## Step 1: Discover Competitions & Quickstarters
 
 ### Phrase mapping
 
 | User says | Action |
 |---|---|
-| `what competitions are available` | List all competitions from competitions.json |
+| `what competitions are available` | Run `crunch list` |
+| `list competitions` | Run `crunch list` |
 | `show quickstarters for <competition>` | List available quickstarters |
 | `quickstarters for synth` | List quickstarters for Synth |
 
 ### How to list competitions
 
-Read `competitions.json` and present the available competitions with their hub URLs.
+Use the `crunch list` command to get all available competitions from the CrunchDAO platform:
+
+```bash
+crunch list
+```
+
+Example output:
+```
+  adialab (TIMESERIES)
+  datacrunch (TIMESERIES)
+  synth (TIMESERIES)
+  falcon (DAG)
+```
+
+The competition hub page is always at `https://hub.crunchdao.com/competitions/<name>`.
 
 ### How to list quickstarters
 
@@ -236,7 +249,7 @@ crunch convert notebook.ipynb main.py --embedded-files  # also export embedded f
 
 ### For competitions with dedicated repos (e.g. Synth)
 
-Some competitions have their own SDK repo. Look up in `competitions.json`:
+Some competitions have their own SDK repo (e.g. `crunch-synth` for Synth):
 
 ```bash
 # Clone the competition repo into the workspace
@@ -505,7 +518,7 @@ The `crunch push` command:
 ### For platform-only competitions (e.g. Synth)
 
 Some competitions submit through the platform directly:
-- Direct the user to the hub URL from `competitions.json`
+- Direct the user to `https://hub.crunchdao.com/competitions/<name>`
 - Explain what files need to be uploaded
 - Provide the leaderboard link
 
@@ -550,13 +563,14 @@ This is useful for adding debug output or loading local-only dependencies.
 | `crunch push --dry` | Dry run (no actual submission) |
 | `crunch convert notebook.ipynb main.py` | Convert notebook to Python |
 | `crunch update-token` | Update the project clone token |
+| `crunch list` | List all available competitions |
 | `crunch ping` | Check if the CrunchDAO server is online |
 
 ## Quickstarter Phrase Mapping (Complete)
 
 | User Phrase Pattern | Action |
 |---|---|
-| `what competitions are available` | List competitions from competitions.json |
+| `what competitions are available` | Run `crunch list` |
 | `show quickstarters for <name>` | Fetch and list quickstarters from registry |
 | `set up <competition>` | Run `crunch setup` with token + quickstarter |
 | `set up <competition> notebook` | Run `crunch setup --notebook` |
