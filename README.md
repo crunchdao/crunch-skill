@@ -7,13 +7,25 @@ An AI skill for [CrunchDAO](https://www.crunchdao.com/) that does two things:
 
 ## What's in this repo
 
-| File | Purpose |
+```
+crunch-skill/
+├── coordinator-cli/                  # Skill: Solana coordinator management
+│   ├── SKILL.md
+│   └── references/
+│       └── cli-reference.md
+├── competition-quickstarters/        # Skill: competition participation
+│   ├── SKILL.md
+│   └── competitions.json
+├── profiles.json.example            # Example profile configuration
+└── profiles.json                    # Your local profiles (git-ignored)
+```
+
+Two independent skills, each with their own `SKILL.md`:
+
+| Skill | Description |
 |---|---|
-| `SKILL.md` | The skill definition — CLI command mappings, profile resolution, quickstarter workflow |
-| `competitions.json` | Registry mapping competition names → repos, packages, evaluators |
-| `references/cli-reference.md` | Full `crunch-cli` command reference |
-| `profiles.json.example` | Example profile configuration |
-| `profiles.json` | Your local profiles (git-ignored) |
+| `coordinator-cli` | Translates plain English → `crunch-cli` commands for managing coordinators, crunches, rewards, checkpoints |
+| `competition-quickstarters` | Discover, explain, improve, backtest, and submit competition solutions |
 
 ## Prerequisites
 
