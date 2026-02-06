@@ -112,6 +112,17 @@ For speed and consistency, map these phrases **directly** to CLI commands withou
 | `check atas <name>` | `crunch-cli crunch check-prize-atas "<name>"` |
 | `map cruncher addresses` | `crunch-cli crunch map-cruncher-addresses` |
 | `emission checkpoint add` | `crunch-cli crunch emission-checkpoint-add` |
+| `list scenarios` | `crunch-cli model list` |
+| `list simulations` | `crunch-cli model list` |
+| `show scenarios` | `crunch-cli model list` |
+| `available scenarios` | `crunch-cli model list` |
+| `run simulation <scenario>` | `crunch-cli model run "<scenario>"` |
+| `run scenario <scenario>` | `crunch-cli model run "<scenario>"` |
+| `simulate <scenario>` | `crunch-cli model run "<scenario>"` |
+| `run model <scenario>` | `crunch-cli model run "<scenario>"` |
+| `validate scenario <scenario>` | `crunch-cli model validate "<scenario>"` |
+| `validate simulation <scenario>` | `crunch-cli model validate "<scenario>"` |
+| `check scenario <scenario>` | `crunch-cli model validate "<scenario>"` |
 
 ### Name Extraction Rules
 
@@ -175,6 +186,15 @@ For speed and consistency, map these phrases **directly** to CLI commands withou
 | `crunch checkpoint-create` | Create checkpoint | `crunch-cli crunch checkpoint-create "Name" prizes.json [--dryrun]` |
 | `crunch checkpoint-get-current` | Current checkpoint | `crunch-cli crunch checkpoint-get-current "Name"` |
 | `crunch checkpoint-get` | Get checkpoint by index | `crunch-cli crunch checkpoint-get "Name" <index>` |
+
+### Model Commands
+| Command | Description | Usage |
+|---------|-------------|-------|
+| `model list` | List simulation scenarios | `crunch-cli model list` |
+| `model run <scenario>` | Run simulation | `crunch-cli model run "scenario" [--output ./results]` |
+| `model validate <scenario>` | Validate scenario file | `crunch-cli model validate "scenario"` |
+
+<Note>Model commands require the Python CLI companion: `pip install crunch-cli`</Note>
 
 ### Global Options
 - `-u, --url <network>` - Network: mainnet-beta, devnet, localhost (default: from config)
