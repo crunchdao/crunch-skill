@@ -78,6 +78,13 @@ If command fails, suggest fixes:
 - Missing wallet? Add `-w /path/to/wallet.json`
 - Not found? List available with `crunches list`
 
+## Coordinator Node Setup
+
+To run your own coordinator node (backend infrastructure for competitions):
+
+1. Fork https://github.com/crunchdao/coordinator-node-starter
+2. Clone your fork and follow its `SKILL.md` for setup and customization
+
 ## Reference
 
 For full CLI documentation: [references/cli-reference.md](references/cli-reference.md)

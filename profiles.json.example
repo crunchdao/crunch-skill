@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "devnet": {
-      "wallet": "path/to/your/keypair.json",
-      "coordinatorWallet": "",
-      "url": ""
-    },
-  }
-}
