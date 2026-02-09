@@ -1,19 +1,20 @@
-# CrunchDAO Skill
+# Crunch Protocol Skill
 
-An AI skill for [CrunchDAO](https://www.crunchdao.com/) that does two things:
+Skills for [Crunch Protocol](https://www.crunchdao.com/) to help you (or your agents) build out new competitions and participate in them. 
 
-1. **Coordinator CLI** — Translates plain-English requests into `crunch-cli` commands for managing coordinators, competitions, rewards, and checkpoints on Solana.
-2. **Competition Quickstarters** — Helps participants discover, understand, improve, backtest, and submit solutions for CrunchDAO competitions.
+1. **Coordinator Skill** — Translates plain-English requests into `crunch-cli` commands for managing coordinators, competitions, rewards, and checkpoints on Solana.
+
+2. **Cruncher Skill** — Helps participants discover, understand, improve, backtest, and submit solutions for CrunchDAO competitions.
 
 ## What's in this repo
 
 ```
 crunch-skill/
-├── crunch-cli/                       # Skill: Solana coordinator management
+├── coordinator-skill/               # Skill: Solana coordinator management
 │   ├── SKILL.md
 │   └── references/
 │       └── cli-reference.md
-├── competition-quickstarters/        # Skill: competition participation
+├── cruncher-skill/        # Skill: competition participation
 │   └── SKILL.md
 ├── profiles.json.example            # Example profile configuration
 └── profiles.json                    # Your local profiles (git-ignored)
