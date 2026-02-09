@@ -16,29 +16,26 @@ crunch-cli --version
 
 ## Profiles
 
-Profiles in `profiles.json` (repo root) map short names to CLI flags. Users say _"list crunches for m-jeremy"_ instead of typing full addresses.
+The CLI has built-in profile management via `~/.crunch/config.json`:
 
-```json
-{
-  "profiles": {
-    "m-jeremy": {
-      "url": "https://mainnet.helius-rpc.com/?api-key=...",
-      "wallet": "/path/to/keypair.json",
-      "multisigAddress": "9WzDXwBbmkg8...",
-      "coordinatorWallet": "5abc..."
-    }
-  }
-}
+```bash
+crunch-cli config show                    # Show current config
+crunch-cli config set <key> <value>       # Set config value
+crunch-cli config use-profile <profile>   # Switch profile
 ```
 
-| Profile field | CLI flag | Notes |
-|---|---|---|
-| `url` | `-u <value>` | RPC URL or moniker: `mainnet-beta`, `devnet`, `testnet`, `localhost` |
-| `wallet` | `-w <value>` | Path to Solana keypair (for multisig proposers) |
-| `multisigAddress` | `-m <value>` | Squads multisig address |
-| `coordinatorWallet` | appended to `coordinator get` | Default coordinator context |
+When user says _"use profile m-jeremy"_ or _"switch to devnet"_:
+```bash
+crunch-cli config use-profile m-jeremy
+```
 
-When user references a profile, load from `profiles.json`, map fields to flags, prepend to command.
+Global flags can override config per-command:
+
+| Flag | Description |
+|------|-------------|
+| `-u <url>` | RPC URL or moniker: `mainnet-beta`, `devnet`, `testnet`, `localhost` |
+| `-w <path>` | Path to Solana keypair |
+| `-m <addr>` | Squads multisig address |
 
 ## Direct Phrase Mapping
 

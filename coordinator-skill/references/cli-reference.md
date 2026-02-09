@@ -23,6 +23,7 @@ Location: `~/.crunch/config.json`
   "loglevel": "info"
 }
 ```
+Is where global profiles are stored. Never change/delete existing profiles except if asked.
 
 ### Config Commands
 ```bash
@@ -37,7 +38,6 @@ crunch-cli config use-profile <profile>
 |---------|-------------|
 | `mainnet-beta` | Solana Mainnet |
 | `devnet` | Solana Devnet |
-| `testnet` | Solana Testnet |
 | `localhost` | Local validator (127.0.0.1:8899) |
 
 ## Complete Command Reference
@@ -89,15 +89,6 @@ crunch-cli coordinator get-config
 - Protocol parameters
 - Fee configurations
 - Margin percentages
-
----
-
-#### `coordinator reset-hotkey`
-Reset/regenerate the SMP hotkey for the coordinator.
-
-```bash
-crunch-cli coordinator reset-hotkey
-```
 
 ---
 

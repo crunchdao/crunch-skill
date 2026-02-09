@@ -15,9 +15,7 @@ crunch-skill/
 │   └── references/
 │       └── cli-reference.md
 ├── cruncher-skill/        # Skill: competition participation
-│   └── SKILL.md
-├── profiles.json.example            # Example profile configuration
-└── profiles.json                    # Your local profiles (git-ignored)
+    └── SKILL.md
 ```
 
 Two independent skills, each with their own `SKILL.md`:
@@ -46,15 +44,6 @@ python -m ipykernel install --user --name synth --display-name "CrunchDAO - Synt
 crunch setup synth my-project --token <YOUR_TOKEN>
 cd synth-my-project
 ```
-
-## Profile Setup
-
-Profiles let you switch between networks / wallets / multisigs by name (e.g. _"list crunches for m-jeremy"_).
-
-1. Copy the example: `cp profiles.json.example profiles.json`
-2. Fill in your RPC URL, wallet path, multisig address, coordinator wallet.
-
-See the **Profiles** section in [`SKILL.md`](SKILL.md) for details.
 
 ## Examples
 
@@ -177,5 +166,4 @@ See the **Profiles** section in [`SKILL.md`](SKILL.md) for details.
 
 ## Security
 
-- **Never commit `profiles.json`** — it contains API keys and wallet paths.
-- The file is git-ignored by default.
+- **Never add a solana wallet keypair without knowing what you are doing and how to make this secure**
