@@ -1,5 +1,5 @@
 ---
-name: cruncher-skill
+name: crunch-compete
 description: Use when working with Crunch competitions - setting up workspaces, exploring quickstarters, testing solutions locally, or submitting entries.
 ---
 

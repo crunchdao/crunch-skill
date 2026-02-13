@@ -1,55 +1,30 @@
-# Crunch Protocol Skill
+# Crunch Protocol Skills
 
-Skills for [Crunch Protocol](https://www.crunchdao.com/) to help you (or your agents) build out new competitions and participate in them. 
+Skills for [Crunch Protocol](https://www.crunchdao.com/) to help you (or your agents) manage competitions and participate in them.
 
-1. **Coordinator Skill** — Translates plain-English requests into `crunch-cli` commands for managing coordinators, competitions, rewards, and checkpoints on Solana.
-
-2. **Cruncher Skill** — Helps participants discover, understand, improve, backtest, and submit solutions for CrunchDAO competitions.
-
-## What's in this repo
-
-```
-crunch-skill/
-├── coordinator-skill/               # Skill: Solana coordinator management
-│   ├── SKILL.md
-│   └── references/
-│       └── cli-reference.md
-├── cruncher-skill/        # Skill: competition participation
-    └── SKILL.md
-```
-
-Two independent skills, each with their own `SKILL.md`:
+## Skills
 
 | Skill | Description |
 |---|---|
-| `crunch-cli` | Translates plain English → `crunch-cli` commands for managing coordinators, crunches, rewards, checkpoints |
-| `competition-quickstarters` | Discover, explain, improve, backtest, and submit competition solutions |
+| [crunch-coordinate](crunch-coordinate/) | Manage coordinators, competitions, rewards, checkpoints, staking via `crunch-cli` |
+| [crunch-compete](crunch-compete/) | Discover, set up, develop, test, and submit competition solutions |
 
 ## Prerequisites
 
 ```bash
-# Coordinator CLI (Solana operations)
+# Coordinator CLI (Solana/protocol operations)
 npm install -g @crunchdao/crunch-cli
-crunch-cli --version
 
-# uv (Python package manager)
-curl -LsSf https://astral.sh/uv/install.sh | sh
+# Coordinator node scaffolding is built into crunch-cli:
+# crunch-cli init-workspace my-challenge
 
-# Competition workspace (one venv per competition — example: Synth)
-mkdir -p ~/.crunch/workspace/competitions/synth && cd ~/.crunch/workspace/competitions/synth
-uv venv && source .venv/bin/activate
-uv pip install crunch-cli crunch-synth jupyter ipykernel --upgrade --quiet --progress-bar off
-python -m ipykernel install --user --name synth --display-name "CrunchDAO - Synth"
-# Get your token from: https://hub.crunchdao.com/competitions/synth/submit
-crunch setup synth my-project --token <YOUR_TOKEN>
-cd synth-my-project
+# Competition participation
+curl -LsSf https://astral.sh/uv/install.sh | sh  # uv for Python env management
 ```
 
 ## Examples
 
 ### Coordinator CLI
-
----
 
 **You:** _"get me information about the Synth crunch on mainnet"_
 
@@ -62,108 +37,37 @@ cd synth-my-project
   Payout Amount:   5000.000000 USDC
   Vault Balance:   6110.000000 USDC
   Max Models:      2
-  Checkpoints:     0
-  Reward Vault:    77UU...yDiC
 ```
 
----
-
-**You:** _"create a checkpoint multisig proposal for the Synth crunch"_
+**You:** _"show my staking positions"_
 
 ```
-✅ Multisig proposal created
-  Proposal:   https://v4.squads.so/transactions/...
-  Crunch:     Synth
-  Prize file: prizes.json (12 entries, 4800.00 USDC total)
-  Status:     Awaiting signatures (1/2)
-```
-
----
-
-**You:** _"what's the current checkpoint for Chaos, format for slack"_
-
-```
-*📍 Checkpoint: Chaos*
-━━━━━━━━━━━━━━━━━
-• *Index:* 5
-• *Total Payout:* 8,000 USDC
-• *Distributed:* 2025-02-01
-• *Claims:* 89/142
-```
-
----
-
-### Competition Quickstarters
-
----
-
-**You:** _"show me quickstarters for Falcon"_
-
-```
-📚 Quickstarters for Falcon
+📊 Staking Positions
 ════════════════════════════════════════
-  1. NGBoost              Python  Submission   📓 notebook
-     by Alexis GASSMANN
-  2. EWMA Variance        Python  Submission   📓 notebook
-     by Alexis GASSMANN
-  3. Quantile Lin. Reg.   Python  Submission   📓 notebook
-     by Alexis GASSMANN
+  Coordinator      Delegated    Rewards
+  AI Research Lab  5,000 CRNCH  120.5 CRNCH
+  Data Science     2,000 CRNCH   45.2 CRNCH
 ```
 
----
+### Competition Participation
 
 **You:** _"set up synth and explain the example tracker"_
 
 ```
 📖 Quickstarter Walkthrough: Example Tracker (Synth)
 ════════════════════════════════════════════════════════════
-
-🎯 Goal
-  Predict probability distributions of future crypto price changes
-  across multiple assets (BTC, ETH, SOL, ...) and time horizons.
-
-🔌 Interface
-  Extend TrackerBase and implement: predict(asset, horizon, step) → distributions
-
-🧠 Approach
-  Gaussian model — computes mean/std of 5-min returns, scales by √(step/300).
-
-⚠️ Limitations
-  - Assumes normal distribution (ignores fat tails)
-  - No volatility regime detection
-  - No cross-asset correlation
+🎯 Goal: Predict probability distributions of future crypto price changes
+🔌 Interface: Extend TrackerBase and implement predict()
+🧠 Approach: Gaussian model — computes mean/std of 5-min returns
 ```
 
----
-
-**You:** _"propose improvements and test them"_
+**You:** _"test my solution and submit"_
 
 ```
-📊 Evaluation Results: MixtureTracker vs Baseline
-════════════════════════════════════════════════════════════
-
-                     Baseline      Yours        Δ
-  BTC (24h CRPS)     0.4231       0.3812      -9.9% ✅
-  ETH (24h CRPS)     0.3987       0.3654      -8.3% ✅
-  SOL (24h CRPS)     0.5102       0.4890      -4.2% ✅
-  ────────────────────────────────────────────────
-  Overall             0.3856       0.3586      -7.0% ✅
+✅ crunch test — passed
+✅ crunch push -m "Improved model" — submitted
 ```
-
----
-
-**You:** _"submit my tracker to synth"_
-
-```
-✅ Ready to submit to Synth
-  File:        my_tracker.py
-  Interface:   TrackerBase.predict() ✓
-  Imports:     all resolved ✓
-  Platform:    https://hub.crunchdao.com/competitions/synth
-```
-
----
 
 ## Security
 
-- **Never add a solana wallet keypair without knowing what you are doing and how to make this secure**
+- **Never add a Solana wallet keypair without knowing what you are doing and how to make this secure**
