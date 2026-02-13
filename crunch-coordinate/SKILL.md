@@ -1,5 +1,5 @@
 ---
-name: crunch-coordinator-skill
+name: crunch-coordinate
 description: Use when managing Crunch coordinators, competitions (crunches), rewards, checkpoints, staking, or cruncher accounts via the crunch-cli.
 ---
 
