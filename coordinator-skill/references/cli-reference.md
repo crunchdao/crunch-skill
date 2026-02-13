@@ -3,7 +3,7 @@
 ## Package Information
 - **Name:** `@crunchdao/crunch-cli`
 - **Binary:** `crunch-cli`
-- **Version:** 4.3.2+
+- **Version:** 1.1.6+
 
 ## Installation
 
@@ -27,18 +27,27 @@ Is where global profiles are stored. Never change/delete existing profiles excep
 
 ### Config Commands
 ```bash
-crunch-cli config set <key> <value>
-crunch-cli config show
-crunch-cli config use-profile <profile>
+crunch-cli config set <key> <value>       # Set config value
+crunch-cli config show                    # Show current config file
+crunch-cli config active                  # Show resolved/active configuration values
+crunch-cli config init                    # Initialize config file with defaults
+crunch-cli config list-profiles           # List available profiles
+crunch-cli config save-profile <name>     # Save current config as a profile
+crunch-cli config use <profile>           # Switch to a profile
 ```
 
-## Network Options
+## Global Options
 
-| Moniker | Description |
-|---------|-------------|
-| `mainnet-beta` | Solana Mainnet |
-| `devnet` | Solana Devnet |
-| `localhost` | Local validator (127.0.0.1:8899) |
+| Flag | Description |
+|------|-------------|
+| `-n, --network` | Solana network (default: `devnet`) |
+| `-w, --wallet` | Path to wallet keypair |
+| `-u, --url` | Custom RPC URL |
+| `-o, --output` | Output format: `json`, `table`, `yaml` (default: `table`) |
+| `-v, --verbose` | Show verbose output |
+| `-q, --quiet` | Suppress non-essential output |
+| `--dry-run` | Preview without executing |
+| `--timeout` | Command timeout in seconds (default: 60) |
 
 ## Complete Command Reference
 
@@ -51,30 +60,24 @@ Register a new coordinator with the protocol.
 crunch-cli coordinator register "AI Research Lab"
 ```
 
-**Requirements:**
-- Unique coordinator name
-- Sufficient SOL for account creation
-- Later requires admin approval
-
 ---
 
 #### `coordinator get [owner]`
-Get coordinator details by owner address.
+Get coordinator details by owner address (defaults to current wallet).
 
 ```bash
-# Current wallet
 crunch-cli coordinator get
-
-# Specific address
 crunch-cli coordinator get "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"
 ```
 
-**Output Fields:**
-- Owner address
-- Coordinator name
-- Registration status
-- Approval status
-- Hotkey information
+---
+
+#### `coordinator list`
+List all coordinators.
+
+```bash
+crunch-cli coordinator list
+```
 
 ---
 
@@ -85,40 +88,35 @@ Get coordinator configuration from the protocol.
 crunch-cli coordinator get-config
 ```
 
-**Output Fields:**
-- Protocol parameters
-- Fee configurations
-- Margin percentages
-
 ---
 
 #### `coordinator set-emission-config <coordinatorPct> <stakerPct> <crunchFundPct>`
-Set emission configuration percentages.
+Set emission configuration percentages (must sum to 100).
 
 ```bash
 crunch-cli coordinator set-emission-config 50 40 10
 ```
 
-**Note:** Percentages must sum to 100.
+---
+
+#### `coordinator reset-hotkey`
+Reset/regenerate the SMP hotkey.
+
+```bash
+crunch-cli coordinator reset-hotkey
+```
 
 ---
 
 ### Competition (Crunch) Management
 
-#### `crunches list [wallet]`
-List all crunches for a coordinator.
+#### `crunch list [wallet]`
+List crunches (optionally for a specific coordinator wallet).
 
 ```bash
-# Current wallet
-crunch-cli crunches list
-
-# Specific coordinator
-crunch-cli crunches list "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"
+crunch-cli crunch list
+crunch-cli crunch list "9WzDXwBbmkg8ZTbNMqUxvQRAyrZzDsGYdLVL9zYtAWWM"
 ```
-
-**Output:**
-- List of all crunches
-- Names, statuses, participant counts
 
 ---
 
@@ -143,40 +141,23 @@ Get detailed information about a competition.
 crunch-cli crunch get "Synth"
 ```
 
-**Output Fields:**
-- Name and status
-- Coordinator info
-- Participant count
-- Prize pool balance
-- Checkpoint information
-- Created/started/ended timestamps
-- Configuration parameters
-
 ---
 
 #### `crunch start <name>`
-Start a competition (transitions from Created to Active).
+Start a competition (Created → Active).
 
 ```bash
 crunch-cli crunch start "Q4 2024 Trading Challenge"
 ```
 
-**Requirements:**
-- Competition must be in Created state
-- Must be the creating coordinator
-
 ---
 
 #### `crunch end <name>`
-End a competition (transitions from Active to Ended).
+End a competition (Active → Ended).
 
 ```bash
 crunch-cli crunch end "Q4 2024 Trading Challenge"
 ```
-
-**Requirements:**
-- Competition must be in Active state
-- Must be the creating coordinator
 
 ---
 
@@ -187,11 +168,14 @@ Get cruncher details for a specific competition.
 crunch-cli crunch get-cruncher "Synth" "5abc..."
 ```
 
-**Output:**
-- Cruncher registration info
-- Model submissions
-- Rewards claimed
-- Performance data
+---
+
+#### `crunch set-fund-config <crunchName> <cruncherPct> <dataproviderPct> <computeProviderPct>`
+Set fund configuration for a crunch (percentages must sum to 100).
+
+```bash
+crunch-cli crunch set-fund-config "Synth" 70 20 10
+```
 
 ---
 
@@ -203,10 +187,6 @@ Deposit USDC rewards to a competition.
 ```bash
 crunch-cli crunch deposit-reward "Synth" 5000
 ```
-
-**Requirements:**
-- Sufficient USDC balance in wallet
-- Competition must exist
 
 ---
 
@@ -226,8 +206,6 @@ Drain remaining USDC from a competition.
 crunch-cli crunch drain "Synth"
 ```
 
-**Use Case:** Recover unspent funds after competition ends
-
 ---
 
 ### Checkpoint Commands
@@ -237,8 +215,6 @@ Create a checkpoint for payout distribution.
 
 ```bash
 crunch-cli crunch checkpoint-create "Synth" "./prizes.json"
-
-# Dry run (no execution)
 crunch-cli crunch checkpoint-create "Synth" "./prizes.json" --dryrun
 ```
 
@@ -258,12 +234,6 @@ Get the current checkpoint information.
 crunch-cli crunch checkpoint-get-current "Synth"
 ```
 
-**Output:**
-- Checkpoint index
-- Total payout amount
-- Distribution timestamp
-- Claim status
-
 ---
 
 #### `crunch checkpoint-get <crunchName> <checkpointIndex>`
@@ -275,93 +245,237 @@ crunch-cli crunch checkpoint-get "Synth" 3
 
 ---
 
-#### `crunch checkpoint-get-address <crunchName> <checkpointIndex>`
-Get the Solana address of a checkpoint account.
+### Cruncher Commands
+
+#### `cruncher create`
+Create a cruncher account.
 
 ```bash
-crunch-cli crunch checkpoint-get-address "Synth" 3
+crunch-cli cruncher create
 ```
 
 ---
 
-### Utility Commands
-
-#### `crunch check-prize-atas <crunchName> <prizeFileName> [-c]`
-Check if crunchers have USDC Associated Token Accounts.
+#### `cruncher get`
+Get cruncher info for current wallet.
 
 ```bash
-# Check only
-crunch-cli crunch check-prize-atas "Synth" "./prizes.json"
-
-# Create missing ATAs
-crunch-cli crunch check-prize-atas "Synth" "./prizes.json" -c
+crunch-cli cruncher get
 ```
 
 ---
 
-#### `crunch set-fund-config <crunchName> <cruncherPct> <dataproviderPct> <computeProviderPct>`
-Set fund configuration for a crunch.
+#### `cruncher get-address <wallet>`
+Get cruncher address from wallet address.
 
 ```bash
-crunch-cli crunch set-fund-config "Synth" 70 20 10
-```
-
-**Note:** Percentages must sum to 100.
-
----
-
-#### `crunch emission-checkpoint-add <emissionFile>`
-Add an emission checkpoint to the coordinator pool.
-
-```bash
-crunch-cli crunch emission-checkpoint-add "./emissions.json"
+crunch-cli cruncher get-address "5abc..."
 ```
 
 ---
 
-#### `crunch map-cruncher-addresses <crunchAddress> <wallets...>`
-Map cruncher wallets into the coordinator pool address index.
+#### `cruncher register <crunchName>`
+Register for a crunch competition.
 
 ```bash
-crunch-cli crunch map-cruncher-addresses "CrunchAddr..." "Wallet1..." "Wallet2..."
+crunch-cli cruncher register "Synth"
 ```
 
 ---
 
-## Multisig Operations
-
-For production environments, use multisig for critical operations:
+#### `cruncher claim <crunchName>`
+Claim rewards from a crunch.
 
 ```bash
-crunch-cli --multisig <SQUADS_MULTISIG_ADDR> <command>
+crunch-cli cruncher claim "Synth"
 ```
 
-**Multisig-Compatible Commands:**
-- `coordinator register`
-- `crunch create`
-- `crunch start`
-- `crunch end`
-- `crunch deposit-reward`
-- `crunch drain`
+---
 
-**Example:**
+#### `cruncher get-claim-record <crunchName>`
+Get claim record for a cruncher in a crunch.
+
 ```bash
-crunch-cli --multisig 9WzDX... crunch create "Production Competition" 50000 3
+crunch-cli cruncher get-claim-record "Synth"
 ```
 
-This creates a Squads proposal instead of direct execution.
+---
+
+#### `cruncher get-claimable-checkpoints <crunchName>`
+Get claimable checkpoints for a crunch.
+
+```bash
+crunch-cli cruncher get-claimable-checkpoints "Synth"
+```
+
+---
+
+#### `cruncher model add <crunchName>`
+Add a model to a crunch.
+
+```bash
+crunch-cli cruncher model add "Synth"
+```
+
+---
+
+#### `cruncher model get <crunchName>`
+Get model info for a crunch.
+
+```bash
+crunch-cli cruncher model get "Synth"
+```
+
+---
+
+#### `cruncher model get-crunch-models <crunchName>`
+Get all models for a crunch.
+
+```bash
+crunch-cli cruncher model get-crunch-models "Synth"
+```
+
+---
+
+#### `cruncher model update <crunchName>`
+Update model results.
+
+```bash
+crunch-cli cruncher model update "Synth"
+```
+
+---
+
+### Staking Commands
+
+#### `staking deposit <amount>`
+Deposit CRNCH tokens to stake.
+
+```bash
+crunch-cli staking deposit 1000
+```
+
+---
+
+#### `staking withdraw <amount>`
+Withdraw CRNCH tokens from stake.
+
+```bash
+crunch-cli staking withdraw 500
+```
+
+---
+
+#### `staking delegate <coordinator> <amount>`
+Delegate tokens to a coordinator.
+
+```bash
+crunch-cli staking delegate "CoordAddr..." 1000
+```
+
+---
+
+#### `staking undelegate <coordinator> <amount>`
+Undelegate tokens from a coordinator.
+
+```bash
+crunch-cli staking undelegate "CoordAddr..." 500
+```
+
+---
+
+#### `staking claim`
+Claim pending staking rewards.
+
+```bash
+crunch-cli staking claim
+```
+
+---
+
+#### `staking rewards`
+Show claimable rewards.
+
+```bash
+crunch-cli staking rewards
+```
+
+---
+
+#### `staking positions`
+Show your staking positions.
+
+```bash
+crunch-cli staking positions
+```
+
+---
+
+#### `staking available`
+Show available (unstaked) balance.
+
+```bash
+crunch-cli staking available
+```
+
+---
+
+#### `staking accounts`
+Show staking account addresses.
+
+```bash
+crunch-cli staking accounts
+```
+
+---
+
+#### `staking positions-accounts`
+Show position account addresses.
+
+```bash
+crunch-cli staking positions-accounts
+```
+
+---
+
+### Model & Simulation Commands
+
+> **Note:** Requires Python `crunch-cli` package (`pip install crunch-cli`)
+
+#### `model list`
+List available scenarios/simulations.
+
+```bash
+crunch-cli model list
+```
+
+---
+
+#### `model run <scenario>`
+Run a simulation scenario.
+
+```bash
+crunch-cli model run "my-scenario"
+```
+
+---
+
+#### `model validate <scenario>`
+Validate a scenario configuration.
+
+```bash
+crunch-cli model validate "my-scenario"
+```
 
 ---
 
 ## JSON Output Mode
 
-For programmatic parsing, use JSON output:
+All commands support `-o json` for structured output:
 
 ```bash
 crunch-cli -o json crunch get "Synth"
 ```
-
-All commands support `-o json` for structured output.
 
 ---
 
