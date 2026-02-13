@@ -6,8 +6,8 @@ Skills for [Crunch Protocol](https://www.crunchdao.com/) to help you (or your ag
 
 | Skill | Description |
 |---|---|
-| [coordinator-skill](coordinator-skill/) | Manage coordinators, competitions, rewards, checkpoints, staking via `crunch-cli` |
-| [cruncher-skill](cruncher-skill/) | Discover, set up, develop, test, and submit competition solutions |
+| [crunch-coordinate](crunch-coordinate/) | Manage coordinators, competitions, rewards, checkpoints, staking via `crunch-cli` |
+| [crunch-compete](crunch-compete/) | Discover, set up, develop, test, and submit competition solutions |
 
 ## Prerequisites
 

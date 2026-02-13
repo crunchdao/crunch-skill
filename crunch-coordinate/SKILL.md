@@ -1,5 +1,5 @@
 ---
-name: crunch-coordinator-skill
+name: crunch-coordinate
 description: Use when managing Crunch coordinators, competitions (crunches), rewards, checkpoints, staking, or cruncher accounts via the crunch-cli.
 ---
 
@@ -92,13 +92,18 @@ If command fails, suggest fixes:
 
 ## Coordinator Node Setup
 
-To scaffold a coordinator node (backend infrastructure for competitions):
+Scaffold a new competition workspace:
 
 ```bash
 crunch-cli init-workspace my-challenge
 ```
 
-This generates a full node workspace. See the coordinator-node-starter skill for customization.
+This generates two directories:
+
+- **`crunch-node-my-challenge/`** — The coordinator node: runtime services, scoring, feeds, checkpoints, and on-chain integration. This is your private deployment.
+- **`crunch-my-challenge/`** — The public competition package: quickstarter notebooks, scoring documentation, and testing tools for participants.
+
+See the coordinator-node-starter skill for node customization (scoring, feeds, contracts).
 
 ## Reference
 
