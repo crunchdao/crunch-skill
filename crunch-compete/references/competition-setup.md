@@ -6,6 +6,7 @@ Every competition follows this pattern.
 
 Prerequisite: We use the UV packaging system, if that is not present switch to pip and venv
 
+
 ```bash
 # 1. Create workspace and venv
 mkdir -p ~/.crunch/workspace/competitions/<competition>
@@ -66,7 +67,6 @@ cd falcon-my-project
 ```
 
 ## Token Storage
-
 Store tokens in memory to use them when needed. 
 
 

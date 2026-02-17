@@ -7,6 +7,7 @@ description: Use when working with Crunch competitions - setting up workspaces, 
 
 Guides users through Crunch competition lifecycle: setup, quickstarter discovery, solution development, local testing, and submission. It assumes that the local development environment for a ML Engineer is set up. 
 
+
 ## Quick Setup
 
 **Each competition needs its own virtual environment** (dependencies can conflict).
@@ -31,6 +32,7 @@ For competition-specific packages and full examples, see [references/competition
 ```bash
 crunch list                    # List competitions
 ```
+
 
 ### 2. Explain
 Read the quickstarter code (`main.py` or notebook) and competition's SKILL.md/README.md. Provide walkthrough covering: Goal, Interface, Data flow, Approach, Scoring, Constraints, Limitations, Improvement ideas.

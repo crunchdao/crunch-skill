@@ -98,12 +98,7 @@ Scaffold a new competition workspace:
 crunch-cli init-workspace my-challenge
 ```
 
-This generates two directories:
-
-- **`crunch-node-my-challenge/`** — The coordinator node: runtime services, scoring, feeds, checkpoints, and on-chain integration. This is your private deployment.
-- **`crunch-my-challenge/`** — The public competition package: quickstarter notebooks, scoring documentation, and testing tools for participants.
-
-See the coordinator-node-starter skill for node customization (scoring, feeds, contracts).
+This generates a full node workspace. See the coordinator-node-starter skill for customization.
 
 ## Reference
 
