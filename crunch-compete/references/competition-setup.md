@@ -67,13 +67,8 @@ cd falcon-my-project
 
 ## Token Storage
 
-Store tokens in `~/.crunch/.tokens` for reuse:
+Store tokens in memory to use them when needed. 
 
-```bash
-# ~/.crunch/.tokens
-SYNTH_TOKEN=******
-FALCON_TOKEN=******
-```
 
 ## Dedicated Competition Repos
 
