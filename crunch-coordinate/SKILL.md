@@ -92,7 +92,7 @@ If command fails, suggest fixes:
 
 ## Coordinator Node Setup
 
-To scaffold a coordinator node (backend infrastructure for competitions):
+Scaffold a new competition workspace:
 
 ```bash
 crunch-cli init-workspace my-challenge

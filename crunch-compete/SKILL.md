@@ -83,10 +83,7 @@ For competition-specific packages and full examples, see [references/competition
 ```bash
 crunch list                    # List competitions
 ```
-Quickstarters available via GitHub API:
-```bash
-curl -s "https://api.github.com/repos/crunchdao/competitions/contents/competitions/<name>/quickstarters"
-```
+
 
 ### 2. Explain
 Read the quickstarter code (`main.py` or notebook) and competition's SKILL.md/README.md. Provide walkthrough covering: Goal, Interface, Data flow, Approach, Scoring, Constraints, Limitations, Improvement ideas.

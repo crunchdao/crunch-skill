@@ -2,7 +2,10 @@
 
 ## Generic Setup Pattern
 
-Every competition follows this pattern:
+Every competition follows this pattern.
+
+Prerequisite: We use the UV packaging system, if that is not present switch to pip and venv
+
 
 ```bash
 # 1. Create workspace and venv
