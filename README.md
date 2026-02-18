@@ -18,8 +18,7 @@ npm install -g @crunchdao/crunch-cli
 # Coordinator node scaffolding is built into crunch-cli:
 # crunch-cli init-workspace my-challenge
 
-# Competition participation
-curl -LsSf https://astral.sh/uv/install.sh | sh  # uv for Python env management
+# Competition participation requires Python 3.9+ (pip and venv included)
 ```
 
 ## Examples
