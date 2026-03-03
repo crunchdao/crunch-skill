@@ -109,40 +109,22 @@ Global flags can override config per-command:
 4. **Execute** — Run command
 5. **Format** — Output for requested medium (Slack/Telegram/Discord/plain)
 
-## Output Formatting
-
-Detect medium from user request ("for slack", "telegram format", etc.):
-
-- **Slack:** `*bold*`, `•` bullets, `━` separators
-- **Telegram:** `<b>bold</b>`, emoji prefixes
-- **Discord:** `## headers`, `**bold**`
-- **Plain:** Simple key: value pairs
-
 ## Error Handling
 
 If command fails, suggest fixes:
 - Wrong network? Add `-n mainnet-beta` or `-n devnet`
 - Missing wallet? Add `-w /path/to/wallet.json`
-- Not found? List available with `crunch-cli crunch list`
+- Not found? List available with `crunch-cli crunch list --all`
 
 ## Coordinator Node Setup
 
-### Scaffolding rules
+### Scaffolding a local Crunch Workspace
 
-1. **Do not require cloning a template repo** — always use the CLI scaffold flow
-2. **Always prefer CLI flow** (`crunch-cli init-workspace`)
-3. Generated workspaces must be **standalone and runnable from their own folder**
-4. Always validate after changes with `make deploy && make verify-e2e`
+1. Requires a pip dependency `pip install coordinator-node`
+2. Prompt the user what type of challenge they are want to build
+3. Instantiate a local crunch environment with a pack that fits best `coordinator-node init my-challenge --pack trading`
+4. Guide the user through the implementation of the Crunch, asking follow up questions and explaining the context so the user can make good decisions. 
 
-### Scaffold a new workspace
-
-```bash
-crunch-cli init-workspace my-challenge
-```
-
-This generates:
-- `my-challenge/crunch-node-my-challenge/` — node deployment (workers, docker, config)
-- `my-challenge/crunch-my-challenge/` — challenge package (tracker, scoring, examples)
 
 ### Design checklist (collect before coding)
 
@@ -170,18 +152,7 @@ Report API at http://localhost:8000
 
 ## Working in a Coordinator Workspace
 
-When you detect you are inside a coordinator node workspace (look for `.agent/` folder, `docker-compose.yml`, `runtime_definitions/`, or `CrunchConfig`), load the project-specific agent context:
-
-1. **Read `.agent/context.md`** — project architecture, extension points, do-not-edit zones
-2. **Read `.agent/policy.md`** — rules, approval gates, output contracts
-3. **Read the relevant playbook** from `.agent/playbooks/`:
-   - `feature.md` — adding a new feature
-   - `bugfix.md` — diagnosing and fixing a bug
-   - `customize.md` — changing competition types, scoring, feeds, emission
-   - `release.md` — deploying to production
-4. **Read subfolder context** when working in a specific area:
-   - `node/.agent/context.md` — workers, docker, config, API, edit boundaries
-   - `challenge/.agent/context.md` — tracker, scoring, backtest, examples
+When you detect you are inside a coordinator node workspace (look for `.agent/` folder, Agent.md file and `CrunchConfig`), load the project-specific agent context:
 
 These files are the source of truth for how to operate in that workspace. They contain approval gates, allowed operations, and validation requirements specific to the project. Follow them.
 
