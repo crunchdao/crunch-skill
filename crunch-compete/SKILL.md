@@ -77,6 +77,107 @@ cd <competition>-<project-name>
 
 For competition-specific packages and full examples, see [references/competition-setup.md](references/competition-setup.md).
 
+## Session Continuation State (Critical)
+
+Use this **strict source priority** for current status:
+1. `<competition>-<project>/results.tsv` (authoritative experiment ledger)
+2. git state in `<competition>-<project>/` (branch, HEAD, tag, clean/dirty)
+3. `~/.../<competition>/SESSION-SUMMARY.md` (compact carry-over summary + next ideas)
+
+Fallbacks when files are missing:
+- If `results.tsv` does not exist yet, treat as fresh run and state "no tracked experiments yet".
+- If no `exp-vNNN` tag exists on HEAD, show `tag=none`.
+- If `SESSION-SUMMARY.md` is missing, proceed with `results.tsv` + git only.
+
+`history.md` is optional narrative context and can be stale.
+Never treat `history.md` as single source of truth for latest best score/version.
+
+**At the START of every session:**
+1. Read `results.tsv` + git state first
+2. Read `SESSION-SUMMARY.md` for quick context and next ideas
+3. Use `history.md` only for long-term background if needed
+
+**At the END of every session (or after significant progress):**
+1. Ensure `results.tsv` is up to date
+2. Update `SESSION-SUMMARY.md` with best version/score + next 2-3 experiments
+3. Optionally append context to `history.md`
+
+### Optional history.md Structure
+
+```markdown
+# <competition> — Experiment History
+
+**Project:** <project-name>
+**Dashboard:** <hub-url>
+**Workspace:** <path>
+**Last updated:** <date>
+
+## Competition Summary
+<one-paragraph: goal, metric, data format, constraints>
+
+## Current Best
+<version, score, whether submitted, what to do next>
+
+## Experiment Log
+| Ver | Features | CV AUC | Test AUC | Sub# | Description |
+|-----|----------|--------|----------|------|-------------|
+| ... | ...      | ...    | ...      | ...  | ...         |
+
+## What Works (Key Learnings)
+<numbered list of validated insights from experiments>
+
+## What Hasn't Been Tried Yet
+### High Priority
+### Medium Priority
+### Lower Priority
+
+## Top Solutions Context
+<leaderboard scores and approaches from prior competitions if available>
+
+## Architecture (current)
+<description of current solution pipeline>
+```
+
+This file is **background narrative only**. The authoritative current state is `results.tsv` + git.
+
+### Fast Continuation Response (Required)
+
+For prompts like "continue", "what's the latest", "keep going", first reply with this exact structure:
+
+```text
+Latest Snapshot — <competition>
+- Best: <vNNN> (<tag>, <commit>) — <score>
+- Branch/HEAD: <branch>, <commit> (<clean/dirty>)
+- Recent experiments:
+  - <vNNN> | <score> | <keep/discard/crash> | <short description>
+  - <vNNN> | <score> | <keep/discard/crash> | <short description>
+  - <vNNN> | <score> | <keep/discard/crash> | <short description>
+
+Suggested Next Approaches
+1) <title>
+   - Hypothesis: <1 sentence>
+   - Expected upside: <range>
+   - Cost/Risk: <runtime + complexity + overfit risk>
+
+2) <title>
+   - Hypothesis: <1 sentence>
+   - Expected upside: <range>
+   - Cost/Risk: <runtime + complexity + overfit risk>
+
+3) <title>
+   - Hypothesis: <1 sentence>
+   - Expected upside: <range>
+   - Cost/Risk: <runtime + complexity + overfit risk>
+
+Choose: 1, 2, 3, or "run all".
+```
+
+For this first continuation response:
+- use lightweight local reads + git only
+- do NOT run `crunch test`
+- do NOT make live submission-limit claims unless re-validated now
+- if submission-limit status is unknown, explicitly say "unknown (not checked live)"
+
 ## Core Workflow
 
 ### 1. Discover
@@ -84,22 +185,33 @@ For competition-specific packages and full examples, see [references/competition
 crunch list                    # List competitions
 ```
 
+### 2. Read Current State
+- Read `<competition>-<project>/results.tsv`
+- Check git branch/HEAD/tag/status in `<competition>-<project>/`
+- Read `../SESSION-SUMMARY.md`
+- Optionally read `../history.md` for context only
 
-### 2. Explain
+### 3. Explain
 Read the quickstarter code (`main.py` or notebook) and competition's SKILL.md/README.md. Provide walkthrough covering: Goal, Interface, Data flow, Approach, Scoring, Constraints, Limitations, Improvement ideas.
 
-### 3. Propose Improvements
-Analyze current approach, cross-reference competition docs (SKILL.md, LITERATURE.md, PACKAGES.md), generate concrete code suggestions:
+### 4. Propose Improvements
+Analyze current approach, cross-reference competition docs (SKILL.md, LITERATURE.md, PACKAGES.md), and recent outcomes from `results.tsv`, then generate concrete code suggestions:
 - Model: mixture densities, NGBoost, quantile regression, ensembles
 - Features: volatility regimes, cross-asset correlation, seasonality
 - Architecture: online learning, Bayesian updating, horizon-specific models
 
-### 4. Test
+### 5. Test
 ```bash
 crunch test                    # Test solution locally
 ```
 
-### 5. Submit
+### 6. Update Tracking
+After each significant experiment:
+- append/update `results.tsv`
+- refresh `SESSION-SUMMARY.md`
+- optionally update `history.md` for long-form narrative
+
+### 7. Submit
 ```bash
 crunch test                    # Always test first
 crunch push -m "Description"   # Submit
@@ -116,6 +228,8 @@ crunch push -m "Description"   # Submit
 | `get the <name> quickstarter` | `crunch quickstarter --name` |
 | `explain this quickstarter` | Structured code walkthrough |
 | `propose improvements` | Analyze and suggest code improvements |
+| `continue working on <competition>` / `what's the latest` | Return Fast Continuation Response first |
+| `keep going` / `let's continue` | Return Fast Continuation Response first |
 | `test my solution` | `crunch test` |
 | `compare with baseline` | Run both, side-by-side results |
 | `submit my solution` | `crunch push` |
