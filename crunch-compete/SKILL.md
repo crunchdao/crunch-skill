@@ -126,6 +126,8 @@ crunch push -m "Description"   # Submit
 - Model files go in `resources/` directory
 - Respect competition interface and constraints (time limits, output format)
 - Ask before installing new packages
+- **NEVER call `crunch push` during iteration/experiment loops** — only `crunch test` is used for local testing. Each `crunch push` creates a submission on the hub and counts toward the daily submission limit (typically 5/day). Getting blocked means you exceeded this limit.
+- `crunch push` requires **explicit human approval** and should only be called ONCE at the very end with the best result
 
 ## Reference
 
