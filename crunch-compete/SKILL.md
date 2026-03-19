@@ -84,6 +84,11 @@ Use this **strict source priority** for current status:
 2. git state in `<competition>-<project>/` (branch, HEAD, tag, clean/dirty)
 3. `~/.../<competition>/SESSION-SUMMARY.md` (compact carry-over summary + next ideas)
 
+Fallbacks when files are missing:
+- If `results.tsv` does not exist yet, treat as fresh run and state "no tracked experiments yet".
+- If no `exp-vNNN` tag exists on HEAD, show `tag=none`.
+- If `SESSION-SUMMARY.md` is missing, proceed with `results.tsv` + git only.
+
 `history.md` is optional narrative context and can be stale.
 Never treat `history.md` as single source of truth for latest best score/version.
 
@@ -171,6 +176,7 @@ For this first continuation response:
 - use lightweight local reads + git only
 - do NOT run `crunch test`
 - do NOT make live submission-limit claims unless re-validated now
+- if submission-limit status is unknown, explicitly say "unknown (not checked live)"
 
 ## Core Workflow
 
@@ -223,6 +229,7 @@ crunch push -m "Description"   # Submit
 | `explain this quickstarter` | Structured code walkthrough |
 | `propose improvements` | Analyze and suggest code improvements |
 | `continue working on <competition>` / `what's the latest` | Return Fast Continuation Response first |
+| `keep going` / `let's continue` | Return Fast Continuation Response first |
 | `test my solution` | `crunch test` |
 | `compare with baseline` | Run both, side-by-side results |
 | `submit my solution` | `crunch push` |
