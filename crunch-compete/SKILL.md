@@ -35,7 +35,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 mkdir -p ~/.crunch/workspace/competitions/<competition>
 cd ~/.crunch/workspace/competitions/<competition>
 uv venv && source .venv/bin/activate
-uv pip install crunch-cli --upgrade --quiet --progress-bar off
+uv pip install crunch-cli --upgrade --quiet --no-progress
 
 # Ask user for token from: https://hub.crunchdao.com/competitions/<competition>/submit
 crunch setup <competition> <project-name> --token <TOKEN>
