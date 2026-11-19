@@ -9,6 +9,12 @@ Helps a user compete end-to-end in a Crunch competition: setup, understanding
 the task, a trustworthy offline validation, local iteration, then push + cloud
 run -- in a loop, until the user says stop.
 
+**Never idle while something runs.** A cloud run takes minutes to hours, a
+local experiment can too. Start the wait in the background (see step 9), then
+immediately work on the next hypothesis: a new feature, another model, a
+deeper search. Waiting is never a step of its own, and "waiting for the run"
+is never a reason to end your turn.
+
 This file is competition-agnostic. Data format, function signatures, metric,
 injected parameters, extra packages and constraints vary per competition:
 always defer to the competition's own overview page and quickstarter. For
@@ -50,14 +56,49 @@ still be scored offline by ordinary cloud runs. Check the overview page:
 Some competitions require extra packages (listed in their docs). Check the
 **deadlines** against today's date before investing hours.
 
-## Discover the CLI, don't assume it
+## Commands
 
-Run `crunch --help` and `crunch <command> --help` before using a command;
-flags drift from any written spec, this file included. The tips printed after
-most commands are also a good hint. Groups observed: `list`, `status`,
-`leaderboard`, `quota`, `quickstarter`, `setup`, `setup-notebook`, `init`,
-`download`, `convert`, `test`, `push`, `submission`, `run`, `runtime`,
-`update-token`, `ping`.
+The commands of the usual flow. This file can be outdated: when a command
+rejects a flag or behaves differently from what is written here, trust
+`crunch <command> --help`, and read the tips printed after most commands.
+
+```
+# workspace
+crunch setup <competition> <project> [directory] --token <token>   # once, right away (token expires)
+crunch status                                    # competition metadata, dates, docs links
+crunch quota                                     # submissions, compute, whether a run is active
+crunch download [--force]                        # (re)download the data
+
+# starter code and libraries
+crunch quickstarter list | show <name> | apply <name> [--overwrite]
+crunch convert <notebook>.ipynb [main.py] --requirements [--overwrite]
+crunch whitelist search <query>                  # is a library allowed in the cloud?
+crunch whitelist validate [requirements.txt]
+
+# local loop
+crunch test [--main-file <file>] [--model-directory <directory>] [--no-force-first-train] [--no-determinism-check]
+
+# submissions
+crunch push -m "<message>" [--main-file <file>] [--model-directory <directory>] [--no-pip-freeze] [--dry]
+crunch submission list [--limit N] [--all] [--original]
+crunch submission show <number>
+crunch submission update <number> --note "<text>"   # shown instead of the message
+crunch submission checkout <number> [files...]
+
+# cloud runs
+crunch runtime list --submission <number>
+crunch run create --submission <number> --runtime <runtime> [--force-first-train true] [--train-frequency N]
+crunch run wait <run-id> [--timeout <seconds>]   # exit code: 0 succeeded, 3 failed, 4 timed out, 5 terminated, 1 error
+crunch run show <run-id>                         # status, error, score
+crunch run logs <run-id> [--tail N] [--follow] [--debug]
+crunch run traces <run-id>                       # time, cpu and ram of each step, against the run's limits
+crunch run list [--limit N] [--all]              # with the score of each run
+crunch run terminate <run-id>
+
+# standing and selection
+crunch leaderboard
+crunch run select <run-id>
+```
 
 ## Mental model
 
@@ -138,8 +179,9 @@ the submission relies on MUST be pushed**, even if left untouched afterwards.
   to check if a notebook behaves differently from a converted file.
 - **Library whitelist:**
   https://docs.crunchdao.com/competitions/participate/whitelisted-libraries --
-  validates `requirements.txt`. Requesting an addition (Resources section:
-  PyPI name, import alias, GPU need) is normal. GitHub-only packages **must
+  validates `requirements.txt` (`crunch whitelist search <name>` and
+  `crunch whitelist validate` check it from the command line). Requesting an
+  addition (Resources section: PyPI name, import alias, GPU need) is normal. GitHub-only packages **must
   be vendored** into the submission: copy only the source you need (don't
   just `git clone`; strip tests, docs, examples...) and merge the package's
   own requirements into your `requirements.txt`.
@@ -189,9 +231,11 @@ crunch test --main-file <file> --model-directory <directory>   # a variant, with
 - **Sub-agents**, if available, suit independent hypotheses: own folder,
   entrypoint and model directory, core and time budget, and the exact baseline
   to beat on the same holdout. Re-verify their wins yourself.
-- **Push one idea at a time.** Explore in parallel, but submit the variant
-  your validation picked -- several at once makes it hard to remember what
-  was actually run.
+- **Push what your validation picked.** Explore in parallel, and push each
+  variant your validation backs with a message saying what it is -- pushing
+  untested variants makes it hard to remember what was actually run, and
+  submissions per day are limited (`crunch quota`): don't spend them on ideas
+  your validation hasn't backed.
 
 **Constraints of *some* competitions** (check the docs for which apply):
 
@@ -216,19 +260,32 @@ push a filled model directory.
 `scratch/`: push it with every submission) of everything: what you tried and
 why, data findings, rejected ideas and their evidence, bugs, and one line per
 pushed variant (submission, run id, description, offline score and noise,
-cloud score). It's your memory, you need it for selection, and `run list`
-shows no scores.
+cloud score). It's your memory and you need it for selection: `run list`
+shows scores but not what each variant was.
 
 ### 7. Push a submission
 
 ```
-crunch push -m "<message>"   # --main-file, --model-directory, --no-pip-freeze
+crunch push -m "<message>"   # --main-file, --model-directory, --no-pip-freeze, --dry
 ```
 
 `--no-pip-freeze` helps when locally pinned versions can't be installed in the
-cloud. The message is immutable and shown as-is by `crunch submission list` /
-`show` -- no score is attached automatically, so write what changed and the
-offline score into it yourself.
+cloud. Write what changed and the offline score into the message: it is
+immutable. Once a run of it is scored, record the outcome with a **note**,
+which `crunch submission list` then shows instead of the message (marked `*`,
+`--original` shows the messages again):
+
+```
+crunch submission update 12 --note "run 126301: 57.59% (offline 57.9%), AR(30) CUSUM"
+```
+
+**Clean the tree before pushing.** Everything under the workspace that is not
+ignored is uploaded: downloaded datasets, cloned repositories, the resources of
+another project or competition, caches, checkpoints of abandoned experiments.
+Move them out of the workspace or list them in `.gitignore`; keep only what
+the submission needs to run and to be reproduced. The submission and its
+resources directory have size limits (`crunch quota`), and `push --dry` shows
+what would be sent.
 
 For a **live-deployed** competition, this is the last CLI step.
 
@@ -256,20 +313,33 @@ Availability can depend on the submission (a CUDA-mandatory package can grant
 a GPU automatically). **Don't ask for a GPU the code doesn't need.** Requests
 are **reviewed by a human** (answer by email), weigh your run history, and once
 granted are permanent for the competition. Ground the justification in
-something observed (a run that saturated CPU/RAM); never request
+something observed (a run that saturated CPU/RAM, as `crunch run traces`
+shows); never request
 speculatively. Keep running on CPU meanwhile.
 
 ### 9. Run it in the cloud -- and keep working while it runs
 
 ```
 crunch run create --submission <number> --runtime <runtime-name>
+crunch run wait <run-id> > run-<run-id>.log 2>&1 &   # in the background, then keep working
 crunch run show <run-id>
 crunch run logs <run-id> [--tail N] [--follow] [--debug]
-crunch run wait <run-id> [--timeout N]
+crunch run traces <run-id>
 crunch run list [--limit N] [--all]
 crunch run terminate <run-id>
 ```
 
+- **Wait in the background, never in the foreground.** `run wait` checks the
+  run every 10 seconds and returns when it ends (exit code 0 succeeded,
+  3 failed, 4 timed out, 5 terminated; 1 means `run wait` itself hit an
+  error, the run may still be going). Agent harnesses kill a foreground
+  command after a couple of minutes, so a foreground `run wait` gets cut off,
+  and polling with `sleep` wastes the time. If your harness can run a command
+  in the background and tell you when it ends, use that; otherwise start it
+  as above, go back to your next experiment, and look at the log (or
+  `crunch run show`) between two steps of that work.
+- **One run at a time** (`crunch quota` shows whether one is running). Get
+  the next variant ready meanwhile, so it can start as soon as the run ends.
 - `--runtime` is required; `--submission` defaults to the latest.
 - `--train-frequency` / `--force-first-train` are **not accepted by every
   competition** (check `run create --help` and the docs; unsupported ones
@@ -278,12 +348,18 @@ crunch run terminate <run-id>
 - Where there is a training step, once per promising line of work run with
   `--force-first-train true`: it proves the model reproduces in the cloud
   (RAM, time, versions). The score should match the locally-trained run.
-- **Only one run can be active at a time** (`crunch quota` shows it). Don't
-  idle on it: wait in the background and develop the next variant meanwhile
-  -- in a separate entrypoint file, never one a running local test is using.
+- Develop the next variant in a separate entrypoint file, never one that a
+  running local test or a pending push is using.
 - **The score can lag completion** (prediction status `checking`): re-read
   `run show` a minute later. Don't poll harder than the default.
+- Once scored, put the score in the submission's note
+  (`crunch submission update <number> --note "..."`) and in your log.
 - `logs --debug` shows pip install failures (hidden by default).
+- **`run traces` shows where a run spent its time and resources**: each step
+  (train, infer, ...) with its duration, average cpu and peak ram against the
+  runtime's limit, then the usage over the whole run. Use it, also while the
+  run is going, to find the slow step, to check how close ram got to the
+  limit before scaling the model up, and to ground a runtime request.
 - **Failed runs still cost quota**: ~5% of duration for timeouts and
   terminations, ~30% for crashes; setup time is free; a run's timeout is your
   remaining quota + ~30 min.
@@ -304,6 +380,11 @@ crunch run select <run-id>
 hours, and whether a run is active (**only one at a time**). The leaderboard
 lags and may be unavailable; `run show` is the reliable way to read a score.
 
+**The leaderboard ranks your best run, not your selected one.** During the
+competition it shows the best score among your runs; your selection is what
+gets scored out of sample at the end. So the leaderboard can show a run you
+did not select.
+
 **Selection decides the user's result -- it is their call.** Don't leave it to
 the automatic fallback (the *latest* successful run, not the best). A grace
 window after the end is common but not guaranteed. The public score measures
@@ -323,6 +404,28 @@ plainer -- stronger bet or safer bet?"
    report with evidence**: exact command, error, stack frames, whether anything
    was created. Don't build a workaround or edit CLI internals.
 
+API errors that mean **stop and report** (don't retry in a loop, don't work
+around them; they print after a `---` line):
+
+- `An internal error occured` -- a server error.
+- `Crunch not found.`, `Current phase not found.`, `Round not found.` --
+  the competition is over or misconfigured on the server.
+- `Your token seems to have expired or is invalid.`, `Project not found.` --
+  the workspace needs a new setup command from the user.
+- `You do not have permission to access this resource` -- wrong credentials
+  or environment.
+- `You cannot participate in the competition yet` -- an account issue
+  (verification, restriction, rules or terms not accepted, country): only the
+  user can fix it.
+- `This action cannot be done during the ... phase.` -- the phase does not
+  allow it.
+
+Errors to fix yourself: `Forbidden packages` (change or request the library),
+`Submission is too big` / `The resources directory is too big` (clean the
+tree), `Competition specific checks did not pass` (read the reason),
+`The main file ... is missing` / `is invalid`, and `Daily submission limit
+exceeded` (wait for midnight UTC, keep working locally).
+
 **State your confidence**: when reporting a bug, leak, exploit or a too-good
 score, say what you verified, what you inferred, and from which source. Report
 a suspected leak or exploit; never use it.
@@ -330,9 +433,7 @@ a suspected leak or exploit; never use it.
 ## Known CLI gaps / quirks
 
 - No `--format json` / `--non-interactive`; text output is inconsistent --
-  don't parse it strictly.
-- `run list` has no score column -- use `run show` (and your log).
-- `runtime request` isn't implemented on the backend yet.
+  don't parse it strictly. Use the exit code of `run wait` for scripts.
 - `setup --token` has no non-interactive or environment-variable fallback --
   always get an explicit, fresh token from the user.
 
