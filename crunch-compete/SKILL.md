@@ -226,6 +226,13 @@ crunch test --main-file <file> --model-directory <directory>   # a variant, with
 - **Use the machine**: run independent experiments in parallel, each with
   capped threads, leaving a few cores to the user. Share large arrays across
   processes via memory-mapped files instead of loading copies.
+- **Thread hygiene**: LightGBM, XGBoost, CatBoost, PyTorch and the BLAS
+  behind numpy take every core by default. Two such jobs side by side fight
+  over the cores and can both run several times slower than one alone, and a
+  `crunch test` running next to an experiment slows down the same way. Give
+  each process an explicit share (`n_jobs`/`num_threads`/`thread_count`,
+  `torch.set_num_threads`, `OMP_NUM_THREADS`) so that the processes times
+  their threads stay within `nproc`.
 - **Variants side by side**: `--main-file` / `--model-directory` (on `test`
   and `push`) let variants coexist in one workspace -- no re-setup.
 - **Sub-agents**, if available, suit independent hypotheses: own folder,
@@ -251,7 +258,10 @@ crunch test --main-file <file> --model-directory <directory>   # a variant, with
   array.
 
 **Scratch files** (dumps, caches, harness, benchmarks) go in e.g. `scratch/`,
-listed in `.gitignore` (`crunch push` respects it). **Reproducibility is
+listed in `.gitignore` (`crunch push` respects it). So do the logs some
+libraries write into the working directory, or they get pushed as code:
+CatBoost's `catboost_info/` (`allow_writing_files=False`, or `train_dir=`),
+Lightning's `lightning_logs/`, MLflow's `mlruns/`. **Reproducibility is
 separate**: with the model directory left **empty**, the training step alone
 must refill it completely -- prize eligibility requires this even when you
 push a filled model directory.
