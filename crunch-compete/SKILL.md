@@ -20,10 +20,10 @@ injected parameters, extra packages and constraints vary per competition:
 always defer to the competition's own overview page and quickstarter. For
 scale, compare:
 
-- `structural-break-real-time` -- streaming: `infer()` is a generator yielding
-  one score per observation.
-- `datacrunch-2` -- batch: `train(X_train, y_train, model_directory_path,
-  loop_moon, embargo)` / `infer(X_test, ...)` over dataframes.
+- Some competitions stream: `infer()` is a generator yielding one score per
+  observation.
+- Others are batch: `train(X_train, y_train, model_directory_path, ...)` /
+  `infer(X_test, ...)` over whole dataframes.
 
 Same platform, same CLI, almost nothing else in common.
 
@@ -396,7 +396,10 @@ gets scored out of sample at the end. So the leaderboard can show a run you
 did not select.
 
 **Selection decides the user's result -- it is their call.** Don't leave it to
-the automatic fallback (the *latest* successful run, not the best). A grace
+the automatic fallback: when nothing is selected, the *latest* successful run
+is used, not the best. `run list` and `run show` mark it `selected (last, by
+default)`, which only means that nobody chose: make the choice explicit with
+`crunch run select <run-id>`, after which it shows as `selected`. A grace
 window after the end is common but not guaranteed. The public score measures
 fit to the public set: weigh how much tuning targeted it, the local/public
 gap, model complexity, and whether a margin exceeds your noise. Present the
