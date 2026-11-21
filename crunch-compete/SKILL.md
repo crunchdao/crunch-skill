@@ -76,7 +76,7 @@ crunch whitelist search <query>                  # is a library allowed in the c
 crunch whitelist validate [requirements.txt]
 
 # local loop
-crunch test [--main-file <file>] [--model-directory <directory>] [--no-force-first-train] [--no-determinism-check]
+crunch test [--main-file <file>] [--model-directory <directory>] [--prediction-directory <directory>] [--no-force-first-train] [--no-determinism-check]
 
 # submissions
 crunch push -m "<message>" [--main-file <file>] [--model-directory <directory>] [-x <pattern>] [--no-pip-freeze] [--dry]
@@ -96,7 +96,7 @@ crunch run list [--limit N] [--all]              # with the score of each run
 crunch run terminate <run-id>
 
 # standing and selection
-crunch leaderboard
+crunch leaderboard [--top N] [--around N] [--all]   # your rank, or the other positions
 crunch run select <run-id>
 ```
 
@@ -243,7 +243,10 @@ crunch test --main-file <file> --model-directory <directory>   # a variant, with
   `crunch run traces` shows the average cpu of each step against the
   runtime's cores: check it after a run.
 - **Variants side by side**: `--main-file` / `--model-directory` (on `test`
-  and `push`) let variants coexist in one workspace -- no re-setup.
+  and `push`) let variants coexist in one workspace -- no re-setup. To test
+  two of them at the same time, give each its own `--prediction-directory`
+  (under an ignored folder such as `scratch/`, or it is pushed as code), or
+  both write to `prediction/`.
 - **Sub-agents**, if available, suit independent hypotheses: own folder,
   entrypoint and model directory, core and time budget, and the exact baseline
   to beat on the same holdout. Re-verify their wins yourself.
@@ -288,8 +291,11 @@ shows scores but not what each variant was.
 crunch push -m "<message>"   # --main-file, --model-directory, -x, --no-pip-freeze, --dry
 ```
 
-`--no-pip-freeze` helps when locally pinned versions can't be installed in the
-cloud. Write what changed and the offline score into the message: it is
+By default the submission's `requirements.txt` is pinned to your installed
+versions (your file is sent along as `requirements.original.txt`, and stays
+unchanged locally); `--no-pip-freeze` sends yours as it is, which helps when
+locally pinned versions can't be installed in the cloud. Write what changed
+and the offline score into the message: it is
 immutable. Once a run of it is scored, record the outcome with a **note**,
 which `crunch submission list` then shows instead of the message (marked `*`,
 `--original` shows the messages again):
@@ -396,7 +402,8 @@ crunch run terminate <run-id>
 ### 10. Check standing, then select
 
 ```
-crunch leaderboard
+crunch leaderboard                       # your rank and score
+crunch leaderboard --top 10 --around 3   # the first positions, and the ones around yours
 crunch quota
 crunch run select <run-id>
 ```
