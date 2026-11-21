@@ -79,7 +79,7 @@ crunch whitelist validate [requirements.txt]
 crunch test [--main-file <file>] [--model-directory <directory>] [--no-force-first-train] [--no-determinism-check]
 
 # submissions
-crunch push -m "<message>" [--main-file <file>] [--model-directory <directory>] [--no-pip-freeze] [--dry]
+crunch push -m "<message>" [--main-file <file>] [--model-directory <directory>] [-x <pattern>] [--no-pip-freeze] [--dry]
 crunch submission list [--limit N] [--all] [--original]
 crunch submission show <number>
 crunch submission update <number> --note "<text>"   # shown instead of the message
@@ -233,6 +233,15 @@ crunch test --main-file <file> --model-directory <directory>   # a variant, with
   each process an explicit share (`n_jobs`/`num_threads`/`thread_count`,
   `torch.set_num_threads`, `OMP_NUM_THREADS`) so that the processes times
   their threads stay within `nproc`.
+- **The submitted code should use the whole cloud machine.** The cloud runs
+  it alone on the runtime's cores: a model that trains or predicts on one
+  core, or with a thread count written into the code for your local runs,
+  leaves the rest idle and runs slower than it could. In the code you push,
+  size threads and workers from the machine (`os.cpu_count()`, `n_jobs=-1`),
+  parallelize what is independent (folds, seeds, models, series), and keep
+  local caps outside the code (environment variables on the command line).
+  `crunch run traces` shows the average cpu of each step against the
+  runtime's cores: check it after a run.
 - **Variants side by side**: `--main-file` / `--model-directory` (on `test`
   and `push`) let variants coexist in one workspace -- no re-setup.
 - **Sub-agents**, if available, suit independent hypotheses: own folder,
@@ -276,7 +285,7 @@ shows scores but not what each variant was.
 ### 7. Push a submission
 
 ```
-crunch push -m "<message>"   # --main-file, --model-directory, --no-pip-freeze, --dry
+crunch push -m "<message>"   # --main-file, --model-directory, -x, --no-pip-freeze, --dry
 ```
 
 `--no-pip-freeze` helps when locally pinned versions can't be installed in the
@@ -296,6 +305,12 @@ Move them out of the workspace or list them in `.gitignore`; keep only what
 the submission needs to run and to be reproduced. The submission and its
 resources directory have size limits (`crunch quota`), and `push --dry` shows
 what would be sent.
+
+To leave files out of **one push only**, `-x <pattern>` (`--exclude`,
+repeatable) takes the same patterns as `.gitignore`, like `git ls-files -x`,
+read as if written in a `.gitignore` of the current directory. Typically the
+other model directories, when `--model-directory` points at one variant:
+`crunch push -m "..." --model-directory resources_v7 -x resources/ -x 'resources_old*/'`.
 
 For a **live-deployed** competition, this is the last CLI step.
 
